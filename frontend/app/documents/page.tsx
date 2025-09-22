@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
     FileText, Settings, LogOut, Search, ChevronDown, Loader2, Upload, X, ArrowUp, ArrowDown, FileImage
 } from 'lucide-react';
@@ -36,44 +37,64 @@ const fetchDocumentsData = async (): Promise<Document[]> => {
 
 // --- Reusable Components ---
 
-const UploadModal = ({ onClose }: { onClose: () => void }) => (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-        <div className="bg-gray-800 p-8 rounded-lg shadow-2xl w-full max-w-lg relative">
-            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white">
-                <X size={24} />
-            </button>
-            <h3 className="text-2xl font-bold text-white mb-6">Upload New Document</h3>
-            <form className="space-y-4">
-                <div>
-                    <label className="text-sm font-bold text-gray-400 block mb-2">Document Title</label>
-                    <input type="text" placeholder="e.g., Q4 Financial Projections" className="w-full bg-gray-700 text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
-                <div>
-                    <label className="text-sm font-bold text-gray-400 block mb-2">Department</label>
-                    <select className="w-full bg-gray-700 text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option>Finance</option>
-                        <option>Operations</option>
-                        <option>Engineering</option>
-                        <option>HR</option>
-                    </select>
-                </div>
-                <div>
-                    <label className="text-sm font-bold text-gray-400 block mb-2">Document File</label>
-                    <div className="border-2 border-dashed border-gray-600 rounded-md p-6 text-center">
-                        <Upload size={40} className="mx-auto text-gray-500 mb-2"/>
-                        <p className="text-gray-400">Drag & drop files here or click to browse</p>
-                        <input type="file" className="opacity-0 absolute inset-0 w-full h-full cursor-pointer" />
+type UploadForm = { title: string; file?: File | null; department: string };
+
+const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept }: { onClose: () => void; onUpload: (data: UploadForm) => void; currentDept: string; canChooseDept: boolean; }) => {
+    const [title, setTitle] = useState('');
+    const [file, setFile] = useState<File | null>(null);
+    const [dept, setDept] = useState(currentDept);
+
+    const submit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!title.trim()) return;
+        onUpload({ title: title.trim(), file, department: dept });
+        onClose();
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+            <div className="bg-gray-800 p-8 rounded-lg shadow-2xl w-full max-w-lg relative">
+                <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white">
+                    <X size={24} />
+                </button>
+                <h3 className="text-2xl font-bold text-white mb-6">Upload New Document</h3>
+                <form className="space-y-4" onSubmit={submit}>
+                    <div>
+                        <label className="text-sm font-bold text-gray-400 block mb-2">Document Title</label>
+                        <input value={title} onChange={(e) => setTitle(e.target.value)} type="text" placeholder="e.g., Q4 Financial Projections" className="w-full bg-gray-700 text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
-                </div>
-                <div className="pt-4">
-                    <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition-colors">
-                        Upload Document
-                    </button>
-                </div>
-            </form>
+                    <div>
+                        <label className="text-sm font-bold text-gray-400 block mb-2">Department</label>
+                        {canChooseDept ? (
+                            <select value={dept} onChange={(e) => setDept(e.target.value)} className="w-full bg-gray-700 text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="Finance">Finance</option>
+                                <option value="Operations">Operations</option>
+                                <option value="Engineering">Engineering</option>
+                                <option value="Maintenance">Maintenance</option>
+                                <option value="HR">HR</option>
+                            </select>
+                        ) : (
+                            <input readOnly value={dept} className="w-full bg-gray-700 text-white rounded-md p-3" />
+                        )}
+                    </div>
+                    <div>
+                        <label className="text-sm font-bold text-gray-400 block mb-2">Document File</label>
+                        <div className="border-2 border-dashed border-gray-600 rounded-md p-6 text-center relative">
+                            <Upload size={40} className="mx-auto text-gray-500 mb-2"/>
+                            <p className="text-gray-400">Drag & drop files here or click to browse</p>
+                            <input onChange={(e) => setFile(e.target.files?.[0] || null)} type="file" className="opacity-0 absolute inset-0 w-full h-full cursor-pointer" />
+                        </div>
+                    </div>
+                    <div className="pt-4">
+                        <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition-colors">
+                            Upload Document
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 const DocumentCard = ({ doc, onMouseEnter, onMouseLeave }: { doc: Document; onMouseEnter: (doc: Document, e: React.MouseEvent) => void; onMouseLeave: () => void; }) => {
     return (
@@ -114,6 +135,8 @@ const DocumentPreview = ({ doc, position }: { doc: Document; position: { top: nu
 
 // --- Main Documents Page Component ---
 export default function DocumentsPage() {
+    const searchParams = useSearchParams();
+
     const [documents, setDocuments] = useState<Document[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [sortConfig, setSortConfig] = useState<{ key: keyof Document; direction: 'asc' | 'desc' }>({ key: 'date', direction: 'desc' });
@@ -121,16 +144,43 @@ export default function DocumentsPage() {
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [hoveredDoc, setHoveredDoc] = useState<Document | null>(null);
     const [previewPosition, setPreviewPosition] = useState({ top: 0, left: 0 });
+    const [deptSlug, setDeptSlug] = useState<string>('operations');
+    const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
-        fetchDocumentsData().then(data => {
-            setDocuments(data);
+        const init = async () => {
+            const urlDept = (searchParams.get('dept') || '').toLowerCase();
+            let storedUser: any = null;
+            try {
+                storedUser = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('kmrl_user') || 'null') : null;
+            } catch {}
+            const admin = storedUser?.isAdmin || urlDept === 'admin';
+            setIsAdmin(admin);
+            setDeptSlug(admin ? 'admin' : (storedUser?.deptSlug || urlDept || 'operations'));
+
+            const base = await fetchDocumentsData();
+
+            // Load uploaded docs per department from localStorage mock store
+            let uploads: Record<string, Document[]> = {};
+            try {
+                uploads = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('kmrl_uploads') || '{}') : {};
+            } catch {}
+
+            const merged = [...base, ...(admin ? Object.values(uploads).flat() : (uploads[(storedUser?.department || '').toString()] || uploads[(storedUser?.deptSlug || urlDept || '')] || []))];
+
+            setDocuments(merged);
             setIsLoading(false);
-        });
-    }, []);
+        };
+        init();
+    }, [searchParams]);
+
+    const filteredByDept = useMemo(() => {
+        if (isAdmin) return documents;
+        return documents.filter(d => d.department.toLowerCase() === deptSlug || d.department === 'all');
+    }, [documents, isAdmin, deptSlug]);
 
     const sortedAndFilteredDocuments = useMemo(() => {
-        let sortedDocs = [...documents];
+        const sortedDocs = [...filteredByDept];
         sortedDocs.sort((a, b) => {
             if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
             if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
@@ -141,7 +191,7 @@ export default function DocumentsPage() {
             return sortedDocs.filter(doc => doc.title.toLowerCase().includes(searchTerm.toLowerCase()));
         }
         return sortedDocs;
-    }, [documents, sortConfig, searchTerm]);
+    }, [filteredByDept, sortConfig, searchTerm]);
 
     const requestSort = (key: keyof Document) => {
         let direction: 'asc' | 'desc' = 'asc';
@@ -184,13 +234,38 @@ export default function DocumentsPage() {
 
             {/* Main Content */}
             <main className="flex-1 p-8 overflow-y-auto">
-                {showUploadModal && <UploadModal onClose={() => setShowUploadModal(false)} />}
+                {showUploadModal && (
+                    <UploadModal
+                        onClose={() => setShowUploadModal(false)}
+                        onUpload={(data) => {
+                            const newDoc: Document = {
+                                id: Date.now(),
+                                title: data.title,
+                                type: data.file ? (data.file.type || 'Upload') : 'Upload',
+                                date: new Date().toISOString().slice(0, 10),
+                                status: 'unread',
+                                department: isAdmin ? data.department : (deptSlug.charAt(0).toUpperCase() + deptSlug.slice(1)),
+                            };
+                            // persist in localStorage grouped by department label
+                            try {
+                                const key = 'kmrl_uploads';
+                                const existing = JSON.parse(localStorage.getItem(key) || '{}');
+                                const deptKey = newDoc.department;
+                                existing[deptKey] = [...(existing[deptKey] || []), newDoc];
+                                localStorage.setItem(key, JSON.stringify(existing));
+                            } catch {}
+                            setDocuments(prev => [newDoc, ...prev]);
+                        }}
+                        currentDept={isAdmin ? 'Admin' : (deptSlug.charAt(0).toUpperCase() + deptSlug.slice(1))}
+                        canChooseDept={isAdmin}
+                    />
+                )}
                 {hoveredDoc && <DocumentPreview doc={hoveredDoc} position={previewPosition} />}
 
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
-                        <h2 className="text-3xl font-bold text-white">All Documents</h2>
-                        <p className="text-gray-400">Browse, search, and manage all your files.</p>
+                        <h2 className="text-3xl font-bold text-white">{isAdmin ? 'All Departments' : (deptSlug.charAt(0).toUpperCase() + deptSlug.slice(1))} Documents</h2>
+                        <p className="text-gray-400">Browse, search, and manage files visible to your {isAdmin ? 'admin account' : 'department'}.</p>
                     </div>
                     <button onClick={() => setShowUploadModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md flex items-center gap-2">
                         <Upload size={20} /> Upload Document

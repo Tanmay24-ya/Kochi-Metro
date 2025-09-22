@@ -1,34 +1,33 @@
 import Link from 'next/link';
-import { BarChart, AlertTriangle, FileText, Users, Clock } from 'lucide-react';
+import { BarChart, AlertTriangle, FileText, Users, Clock, Lightbulb } from 'lucide-react';
 
 // A simple component for feature cards
 const FeatureCard = ({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) => (
-    <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+    <div className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
         <div className="flex items-center gap-4 mb-3">
-            <div className="bg-sky-100 text-sky-600 p-2 rounded-full">
+            <div className="bg-blue-800 text-blue-300 p-3 rounded-full">
                 {icon}
             </div>
-            <h3 className="text-xl font-semibold text-gray-800">{title}</h3>
+            <h3 className="text-xl font-semibold text-gray-100">{title}</h3>
         </div>
-        <p className="text-gray-600">{children}</p>
+        <p className="text-gray-400">{children}</p>
     </div>
 );
 
 export default function LandingPage() {
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-900 text-gray-50">
             {/* Header */}
-            <header className="bg-white shadow-sm">
+            <header className="bg-gray-950 shadow-md">
                 <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-gray-800">
-                        KMRL <span className="text-sky-600">Intelligent Hub</span>
-                    </h1>
+                    <Link href="/" className="text-3xl font-extrabold text-white">
+                        KMRL <span className="text-blue-500">Intelligent Hub</span>
+                    </Link>
                     <nav className="space-x-4">
-                        {/* Pass a query parameter to the login page to distinguish roles */}
-                        <Link href="/login?role=department" className="text-gray-600 hover:text-sky-600 transition-colors">
+                        <Link href="/login?role=department" className="text-gray-300 hover:text-blue-400 transition-colors text-lg px-4 py-2 rounded-md">
                             Department Login
                         </Link>
-                        <Link href="/login?role=admin" className="bg-sky-600 text-white px-4 py-2 rounded-md hover:bg-sky-700 transition-colors">
+                        <Link href="/login?role=admin" className="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition-colors text-lg">
                             Admin Login
                         </Link>
                     </nav>
@@ -36,57 +35,112 @@ export default function LandingPage() {
             </header>
 
             {/* Hero Section */}
-            <main className="container mx-auto px-6 py-16 text-center">
-                <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
-                    Turn Information Overload into Actionable Intelligence
-                </h2>
-                <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
-                    Our platform condenses thousands of documents—reports, invoices, safety bulletins, and more—into trustworthy snapshots, empowering every KMRL stakeholder with the right information at the right time.
-                </p>
-                <div className="mt-8 flex justify-center gap-4">
-                    <Link href="/login?role=department" className="bg-sky-600 text-white text-lg px-8 py-3 rounded-full font-semibold hover:bg-sky-700 transition-transform hover:scale-105">
-                        Login as Department
-                    </Link>
-                    <Link href="/login?role=admin" className="bg-gray-700 text-white text-lg px-8 py-3 rounded-full font-semibold hover:bg-gray-800 transition-transform hover:scale-105">
-                        Login as Admin
-                    </Link>
+            <main className="relative h-screen flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: "url('/images/metro-bg-dark.jpg')" }}>
+                {/* Overlay for better text readability */}
+                <div className="absolute inset-0 bg-black opacity-70"></div>
+                <div className="relative z-10 container mx-auto px-6 text-center text-white">
+                    <h2 className="text-5xl md:text-6xl font-extrabold leading-tight drop-shadow-lg animate-fade-in-up">
+                        Seamless Information, Smarter Decisions
+                    </h2>
+                    <p className="mt-6 text-xl text-gray-300 max-w-4xl mx-auto drop-shadow-md animate-fade-in-up delay-200">
+                        KMRL's Intelligent Hub transforms vast quantities of documents into precise, actionable intelligence,
+                        empowering every stakeholder to drive efficiency and uphold operational excellence.
+                    </p>
+                    <div className="mt-12 flex flex-col sm:flex-row justify-center gap-6 animate-fade-in-up delay-400">
+                        <Link href="/login?role=department" className="bg-blue-600 text-white text-xl px-10 py-4 rounded-full font-bold hover:bg-blue-700 transition-transform transform hover:scale-105 shadow-xl">
+                            Login as Department
+                        </Link>
+                        <Link href="/login?role=admin" className="bg-gray-700 text-white text-xl px-10 py-4 rounded-full font-bold hover:bg-gray-600 transition-transform transform hover:scale-105 shadow-xl">
+                            Login as Admin
+                        </Link>
+                    </div>
                 </div>
             </main>
 
-            {/* Features Section */}
-            <section className="bg-white py-20">
-                <div className="container mx-auto px-6">
-                    <div className="text-center mb-12">
-                        <h3 className="text-3xl font-bold text-gray-800">Addressing Critical Challenges</h3>
-                        <p className="text-gray-500 mt-2">From latency to knowledge loss, we provide a unified solution.</p>
+            {/* About the Challenge Section */}
+            <section className="py-24 bg-gray-900">
+                <div className="container mx-auto px-6 text-center">
+                    <h3 className="text-4xl font-bold text-white mb-6 animate-fade-in-up">The Challenge: Navigating Information Chaos</h3>
+                    <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-12 animate-fade-in-up delay-100">
+                        In a complex operation like KMRL, critical information is constantly generated across diverse formats and departments.
+                        Without a unified system, this creates significant bottlenecks and risks.
+                    </p>
+                    <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+                        <div className="text-left bg-gray-800 p-8 rounded-lg shadow-xl animate-fade-in-left">
+                            <h4 className="text-2xl font-semibold text-blue-400 mb-4">Information Overload</h4>
+                            <p className="text-gray-300">
+                                Thousands of documents—engineering drawings, incident reports, invoices, regulatory directives—arrive daily.
+                                This sheer volume overwhelms front-line managers, delaying crucial decisions on train availability,
+                                contractor payments, and staffing.
+                            </p>
+                        </div>
+                        <div className="text-left bg-gray-800 p-8 rounded-lg shadow-xl animate-fade-in-right">
+                            <h4 className="text-2xl font-semibold text-blue-400 mb-4">Siloed Knowledge & Risks</h4>
+                            <p className="text-gray-300">
+                                Critical updates get buried, leading to missed deadlines, audit non-conformities, and lost institutional
+                                memory when personnel transfer. Duplicate efforts waste valuable time and resources.
+                            </p>
+                        </div>
                     </div>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <FeatureCard icon={<Clock size={24} />} title="Reduce Information Latency">
-                            Stop wasting hours skimming. Get actionable summaries delivered instantly to front-line managers.
+                </div>
+            </section>
+
+            {/* Solution Features Section */}
+            <section className="bg-gray-950 py-24">
+                <div className="container mx-auto px-6">
+                    <div className="text-center mb-16">
+                        <h3 className="text-4xl font-bold text-white mb-4 animate-fade-in-up">Our Solution: Intelligent Document Hub</h3>
+                        <p className="text-lg text-gray-400 max-w-3xl mx-auto animate-fade-in-up delay-100">
+                            We empower every stakeholder with rapid, trustworthy snapshots of the documents that matter to them,
+                            preserving traceability to the original source.
+                        </p>
+                    </div>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                        <FeatureCard icon={<Clock size={28} />} title="Real-time Insights">
+                            Get instant, actionable summaries of lengthy documents, accelerating decision-making across all departments.
                         </FeatureCard>
-                        <FeatureCard icon={<Users size={24} />} title="Break Down Silos">
-                            Ensure Procurement, Engineering, and HR are all on the same page with cross-departmental awareness.
+                        <FeatureCard icon={<Users size={28} />} title="Seamless Collaboration">
+                            Break down departmental silos with cross-functional information sharing and unified awareness.
                         </FeatureCard>
-                        <FeatureCard icon={<AlertTriangle size={24} />} title="Enhance Compliance">
-                            Never miss a regulatory update again. Flag critical directives from CMRS and MoHUA automatically.
+                        <FeatureCard icon={<AlertTriangle size={28} />} title="Enhanced Compliance">
+                            Automate tracking of regulatory updates, ensuring timely responses and audit readiness.
                         </FeatureCard>
-                        <FeatureCard icon={<FileText size={24} />} title="Preserve Knowledge">
-                            Safeguard institutional memory by transforming static files into a searchable, intelligent database.
+                        <FeatureCard icon={<FileText size={28} />} title="Knowledge Preservation">
+                            Transform static files into a dynamic, searchable knowledge base, safeguarding institutional memory.
                         </FeatureCard>
-                        <FeatureCard icon={<BarChart size={24} />} title="Boost Productivity">
-                            Eliminate duplicated effort in creating summaries and reports. Focus on what truly matters.
+                        <FeatureCard icon={<BarChart size={28} />} title="Boosted Productivity">
+                            Eliminate manual summarization and reporting, allowing teams to focus on strategic initiatives.
                         </FeatureCard>
-                        <FeatureCard icon={<FileText size={24} />} title="Future-Ready">
-                            Built to scale with KMRL's expansion, integrating new data streams from IoT and Unified Namespace.
+                        <FeatureCard icon={<Lightbulb size={28} />} title="Future-Proof Scalability">
+                            Designed to integrate emerging technologies like IoT and UNS, ready for KMRL's future expansion.
                         </FeatureCard>
                     </div>
                 </div>
             </section>
 
+            {/* Call to Action Section */}
+            <section className="py-20 bg-blue-700 text-white text-center">
+                <div className="container mx-auto px-6">
+                    <h3 className="text-4xl font-bold mb-4">Ready to Transform Your Operations?</h3>
+                    <p className="text-xl max-w-3xl mx-auto mb-8">
+                        Experience the power of streamlined information management. Log in to your dedicated portal.
+                    </p>
+                    <div className="flex flex-col sm:flex-row justify-center gap-6">
+                        <Link href="/login?role=department" className="bg-white text-blue-700 text-xl px-10 py-4 rounded-full font-bold hover:bg-gray-200 transition-transform transform hover:scale-105 shadow-lg">
+                            Department Access
+                        </Link>
+                        <Link href="/login?role=admin" className="bg-gray-900 text-white text-xl px-10 py-4 rounded-full font-bold hover:bg-gray-700 transition-transform transform hover:scale-105 shadow-lg">
+                            Admin Access
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
             {/* Footer */}
-            <footer className="bg-gray-800 text-white py-6">
+            <footer className="bg-gray-950 text-gray-400 py-8">
                 <div className="container mx-auto px-6 text-center">
-                    <p>&copy; {new Date().getFullYear()} Kochi Metro Rail Limited. All Rights Reserved.</p>
+                    <p className="mb-2">&copy; {new Date().getFullYear()} Kochi Metro Rail Limited. All Rights Reserved.</p>
+                    <p className="text-sm">Empowering KMRL with Intelligent Document Solutions.</p>
                 </div>
             </footer>
         </div>

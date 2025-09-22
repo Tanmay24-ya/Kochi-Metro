@@ -4,6 +4,7 @@ import { useState, FormEvent, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { ArrowLeft } from 'lucide-react';
 
 // A separate component to handle Suspense for useSearchParams
 const LoginContent = () => {
@@ -37,34 +38,34 @@ const LoginContent = () => {
         });
 
         // --- Mock API Call ---
-        // In a real app, you would make an API call here to your backend
-        // for authentication. For now, we'll just log it and redirect.
-
-        // Example: router.push('/dashboard');
         alert(`Login successful for ${role}: ${userId}`);
         router.push('/'); // Redirect to home page after "login"
     };
 
     const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
     if (!siteKey) {
-        return <p className="text-red-500 text-center mt-10">reCAPTCHA Site Key is not configured.</p>;
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+                <p className="text-red-400 text-center">reCAPTCHA Site Key is not configured.</p>
+            </div>
+        );
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+        <div className="flex items-center justify-center min-h-screen bg-gray-900">
+            <div className="w-full max-w-md p-8 space-y-8 bg-gray-950 rounded-2xl shadow-2xl">
                 <div className="text-center">
-                    <h1 className="text-2xl font-bold text-gray-800">
-                        KMRL <span className="text-sky-600">Intelligent Hub</span>
-                    </h1>
-                    <h2 className="mt-2 text-xl font-semibold text-gray-700 capitalize">
-                        {role} Login
+                    <Link href="/" className="text-3xl font-extrabold text-white">
+                        KMRL <span className="text-blue-500">Intelligent Hub</span>
+                    </Link>
+                    <h2 className="mt-4 text-2xl font-bold text-gray-300 capitalize">
+                        {role} Portal Access
                     </h2>
                 </div>
 
                 <form className="space-y-6" onSubmit={handleLogin}>
                     <div>
-                        <label htmlFor="userId" className="text-sm font-medium text-gray-700">
+                        <label htmlFor="userId" className="text-sm font-bold text-gray-400">
                             User ID
                         </label>
                         <input
@@ -74,14 +75,14 @@ const LoginContent = () => {
                             required
                             value={userId}
                             onChange={(e) => setUserId(e.target.value)}
-                            className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500"
+                            className="w-full px-4 py-3 mt-2 text-gray-100 bg-gray-800 border border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
                             placeholder="Enter your User ID"
                         />
                     </div>
                     <div>
                         <label
                             htmlFor="password"
-                            className="text-sm font-medium text-gray-700"
+                            className="text-sm font-bold text-gray-400"
                         >
                             Password
                         </label>
@@ -92,32 +93,33 @@ const LoginContent = () => {
                             required
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500"
+                            className="w-full px-4 py-3 mt-2 text-gray-100 bg-gray-800 border border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
                             placeholder="••••••••"
                         />
                     </div>
 
-                    <div className="flex justify-center">
+                    <div className="flex justify-center pt-2">
                         <ReCAPTCHA
                             sitekey={siteKey}
                             onChange={(token) => setRecaptchaToken(token)}
+                            theme="dark" // Set the reCAPTCHA theme to dark
                         />
                     </div>
 
-                    {error && <p className="text-sm text-center text-red-600">{error}</p>}
+                    {error && <p className="text-sm text-center text-red-400">{error}</p>}
 
                     <div>
                         <button
                             type="submit"
-                            className="w-full px-4 py-2 font-semibold text-white bg-sky-600 rounded-md hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-colors"
+                            className="w-full px-4 py-3 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-950 focus:ring-blue-500 transition-colors duration-300"
                         >
                             Login
                         </button>
                     </div>
                 </form>
                 <div className="text-center">
-                    <Link href="/" className="text-sm text-sky-600 hover:underline">
-                        &larr; Back to Home
+                    <Link href="/" className="inline-flex items-center gap-2 text-sm text-blue-400 hover:underline">
+                        <ArrowLeft size={16} /> Back to Home
                     </Link>
                 </div>
             </div>
@@ -128,7 +130,7 @@ const LoginContent = () => {
 // We wrap the main component in Suspense because `useSearchParams` needs it.
 export default function LoginPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">Loading...</div>}>
             <LoginContent />
         </Suspense>
     );

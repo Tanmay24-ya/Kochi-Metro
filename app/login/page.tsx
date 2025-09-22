@@ -37,9 +37,9 @@ const LoginContent = () => {
             recaptchaToken,
         });
 
-        // --- Mock API Call ---
-        alert(`Login successful for ${role}: ${userId}`);
-        router.push('/'); // Redirect to home page after "login"
+        // --- Mock Login & Redirect ---
+        // On successful login, redirect to the main dashboard.
+        router.push('/dashboard');
     };
 
     const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;

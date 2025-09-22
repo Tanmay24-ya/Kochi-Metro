@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
-    "start": "next start",
-    "lint": "eslint"
+    "dev": "next dev frontend --turbopack",
+    "build": "next build frontend --turbopack",
+    "start": "next start frontend",
+    "lint": "eslint frontend"
   },
   "dependencies": {
     "lucide-react": "^0.544.0",

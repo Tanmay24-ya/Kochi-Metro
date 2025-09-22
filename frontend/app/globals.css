@@ -22,3 +22,25 @@
 body {
     background-color: #f0f2f5; /* A light grey background for a professional feel */
 }
+
+/* Add this at the end of your globals.css file */
+
+@keyframes scrollBackground {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+.bg-scroll-animation {
+  /* Adjust the duration (e.g., 30s) to make the scroll faster or slower */
+  animation: scrollBackground 30s linear infinite;
+
+  /* This ensures the background image tiles horizontally */
+  background-repeat: repeat-x;
+
+  /* This makes the image cover the height of the screen while its width is auto-sized for tiling */
+  background-size: auto 100%;
+}

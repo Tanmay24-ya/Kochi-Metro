@@ -43,12 +43,45 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 ;
 ;
 ;
+// Utility: map ID prefix to department slug and label
+const prefixToDept = (id)=>{
+    const u = id.toUpperCase();
+    if (u.startsWith('ADMIN')) return {
+        slug: 'admin',
+        label: 'Admin'
+    };
+    if (u.startsWith('OPS')) return {
+        slug: 'operations',
+        label: 'Operations'
+    };
+    if (u.startsWith('ENG')) return {
+        slug: 'engineering',
+        label: 'Engineering'
+    };
+    if (u.startsWith('MNT')) return {
+        slug: 'maintenance',
+        label: 'Maintenance'
+    };
+    if (u.startsWith('FIN')) return {
+        slug: 'finance',
+        label: 'Finance'
+    };
+    if (u.startsWith('HR')) return {
+        slug: 'hr',
+        label: 'HR'
+    };
+    return {
+        slug: 'operations',
+        label: 'Operations'
+    }; // default
+};
 // A separate component to handle Suspense for useSearchParams
 const LoginContent = ()=>{
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
     const searchParams = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useSearchParams"])();
     const role = searchParams.get('role') || 'department'; // Default to department
     const [userId, setUserId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
+    const [name, setName] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [password, setPassword] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [recaptchaToken, setRecaptchaToken] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
@@ -63,15 +96,26 @@ const LoginContent = ()=>{
             setError('Please complete the reCAPTCHA challenge.');
             return;
         }
-        console.log('Logging in with:', {
-            role,
+        const dept = prefixToDept(userId);
+        const isAdmin = dept.slug === 'admin';
+        // Mock auth: Save user context locally for this demo
+        const user = {
+            name: name || userId,
             userId,
-            password,
-            recaptchaToken
-        });
-        // --- Mock Login & Redirect ---
-        // On successful login, redirect to the main dashboard.
-        router.push('/dashboard');
+            department: dept.label,
+            deptSlug: dept.slug,
+            isAdmin
+        };
+        try {
+            if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
+            ;
+        } catch  {}
+        // Redirect rules per requirement
+        if (isAdmin) {
+            router.push('/admin');
+        } else {
+            router.push(`/dashboard?dept=${dept.slug}`);
+        }
     };
     const siteKey = ("TURBOPACK compile-time value", "6LdukdErAAAAAMPoTBywrVK-SHYAzmwflvpar4xW");
     if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
@@ -91,16 +135,16 @@ const LoginContent = ()=>{
                                 "KMRL ",
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     className: "text-blue-500",
-                                    children: "Intelligent Hub"
+                                    children: "Intelligence Hub"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/login/page.tsx",
-                                    lineNumber: 59,
+                                    lineNumber: 85,
                                     columnNumber: 30
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/login/page.tsx",
-                            lineNumber: 58,
+                            lineNumber: 84,
                             columnNumber: 21
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -111,13 +155,13 @@ const LoginContent = ()=>{
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/login/page.tsx",
-                            lineNumber: 61,
+                            lineNumber: 87,
                             columnNumber: 21
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/frontend/app/login/page.tsx",
-                    lineNumber: 57,
+                    lineNumber: 83,
                     columnNumber: 17
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -129,10 +173,10 @@ const LoginContent = ()=>{
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                     htmlFor: "userId",
                                     className: "text-sm font-bold text-gray-400",
-                                    children: "User ID"
+                                    children: "User ID (e.g., FIN001, ENG002, ADMIN001)"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/login/page.tsx",
-                                    lineNumber: 68,
+                                    lineNumber: 94,
                                     columnNumber: 25
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -146,13 +190,43 @@ const LoginContent = ()=>{
                                     placeholder: "Enter your User ID"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/login/page.tsx",
-                                    lineNumber: 71,
+                                    lineNumber: 97,
                                     columnNumber: 25
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/login/page.tsx",
-                            lineNumber: 67,
+                            lineNumber: 93,
+                            columnNumber: 21
+                        }, ("TURBOPACK compile-time value", void 0)),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                    htmlFor: "name",
+                                    className: "text-sm font-bold text-gray-400",
+                                    children: "Name"
+                                }, void 0, false, {
+                                    fileName: "[project]/frontend/app/login/page.tsx",
+                                    lineNumber: 109,
+                                    columnNumber: 25
+                                }, ("TURBOPACK compile-time value", void 0)),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                    id: "name",
+                                    name: "name",
+                                    type: "text",
+                                    value: name,
+                                    onChange: (e)=>setName(e.target.value),
+                                    className: "w-full px-4 py-3 mt-2 text-gray-100 bg-gray-800 border border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 focus:outline-none",
+                                    placeholder: "Your name (optional)"
+                                }, void 0, false, {
+                                    fileName: "[project]/frontend/app/login/page.tsx",
+                                    lineNumber: 110,
+                                    columnNumber: 25
+                                }, ("TURBOPACK compile-time value", void 0))
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/frontend/app/login/page.tsx",
+                            lineNumber: 108,
                             columnNumber: 21
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -163,7 +237,7 @@ const LoginContent = ()=>{
                                     children: "Password"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/login/page.tsx",
-                                    lineNumber: 83,
+                                    lineNumber: 121,
                                     columnNumber: 25
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -177,13 +251,13 @@ const LoginContent = ()=>{
                                     placeholder: "••••••••"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/login/page.tsx",
-                                    lineNumber: 89,
+                                    lineNumber: 127,
                                     columnNumber: 25
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/login/page.tsx",
-                            lineNumber: 82,
+                            lineNumber: 120,
                             columnNumber: 21
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -194,12 +268,12 @@ const LoginContent = ()=>{
                                 theme: "dark"
                             }, void 0, false, {
                                 fileName: "[project]/frontend/app/login/page.tsx",
-                                lineNumber: 102,
+                                lineNumber: 140,
                                 columnNumber: 25
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/frontend/app/login/page.tsx",
-                            lineNumber: 101,
+                            lineNumber: 139,
                             columnNumber: 21
                         }, ("TURBOPACK compile-time value", void 0)),
                         error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -207,7 +281,7 @@ const LoginContent = ()=>{
                             children: error
                         }, void 0, false, {
                             fileName: "[project]/frontend/app/login/page.tsx",
-                            lineNumber: 109,
+                            lineNumber: 147,
                             columnNumber: 31
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -217,18 +291,18 @@ const LoginContent = ()=>{
                                 children: "Login"
                             }, void 0, false, {
                                 fileName: "[project]/frontend/app/login/page.tsx",
-                                lineNumber: 112,
+                                lineNumber: 150,
                                 columnNumber: 25
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/frontend/app/login/page.tsx",
-                            lineNumber: 111,
+                            lineNumber: 149,
                             columnNumber: 21
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/frontend/app/login/page.tsx",
-                    lineNumber: 66,
+                    lineNumber: 92,
                     columnNumber: 17
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -241,30 +315,30 @@ const LoginContent = ()=>{
                                 size: 16
                             }, void 0, false, {
                                 fileName: "[project]/frontend/app/login/page.tsx",
-                                lineNumber: 122,
+                                lineNumber: 160,
                                 columnNumber: 25
                             }, ("TURBOPACK compile-time value", void 0)),
                             " Back to Home"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/frontend/app/login/page.tsx",
-                        lineNumber: 121,
+                        lineNumber: 159,
                         columnNumber: 21
                     }, ("TURBOPACK compile-time value", void 0))
                 }, void 0, false, {
                     fileName: "[project]/frontend/app/login/page.tsx",
-                    lineNumber: 120,
+                    lineNumber: 158,
                     columnNumber: 17
                 }, ("TURBOPACK compile-time value", void 0))
             ]
         }, void 0, true, {
             fileName: "[project]/frontend/app/login/page.tsx",
-            lineNumber: 56,
+            lineNumber: 82,
             columnNumber: 13
         }, ("TURBOPACK compile-time value", void 0))
     }, void 0, false, {
         fileName: "[project]/frontend/app/login/page.tsx",
-        lineNumber: 55,
+        lineNumber: 81,
         columnNumber: 9
     }, ("TURBOPACK compile-time value", void 0));
 };
@@ -275,17 +349,17 @@ function LoginPage() {
             children: "Loading..."
         }, void 0, false, {
             fileName: "[project]/frontend/app/login/page.tsx",
-            lineNumber: 133,
+            lineNumber: 171,
             columnNumber: 29
         }, void 0),
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(LoginContent, {}, void 0, false, {
             fileName: "[project]/frontend/app/login/page.tsx",
-            lineNumber: 134,
+            lineNumber: 172,
             columnNumber: 13
         }, this)
     }, void 0, false, {
         fileName: "[project]/frontend/app/login/page.tsx",
-        lineNumber: 133,
+        lineNumber: 171,
         columnNumber: 9
     }, this);
 }

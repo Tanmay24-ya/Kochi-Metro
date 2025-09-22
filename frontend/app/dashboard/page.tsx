@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
     Bell, FileText, Clock, CheckCircle, RefreshCw, X, User, Settings, LogOut, Search, ChevronDown, Loader2
 } from 'lucide-react';
@@ -20,41 +21,25 @@ type UserProfile = {
     name: string;
     role: 'admin' | 'department';
     department?: string; // Department is optional for an admin
+    deptSlug?: string;
 };
 
 // --- API Simulation ---
 // This function mimics fetching data from your backend.
 // Replace the content of this function with your actual API call.
-const fetchDashboardData = async (): Promise<{ user: UserProfile, documents: Document[] }> => {
+const fetchDashboardData = async (): Promise<{ documents: Document[] }> => {
     console.log("Fetching data from backend...");
-    // Simulate a network delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    // In a real app, you would fetch this data, e.g., from '/api/dashboard'
-    // and it would be specific to the logged-in user.
-    const mockData = {
-        user: {
-            name: 'Finance Officer',
-            role: 'department',
-            department: 'Finance',
-        } as UserProfile,
-        documents: [
-            { id: 1, title: 'Q3 Vendor Invoice Batch', type: 'Invoice', date: '2025-09-22', status: 'approval_pending', department: 'Finance' },
-            { id: 2, title: 'New Safety Circular (SC-113)', type: 'Safety Bulletin', date: '2025-09-21', status: 'unread', department: 'Operations' },
-            { id: 3, title: 'Corridor Expansion Environmental Study', type: 'Report', date: '2025-09-20', status: 'read', department: 'Engineering' },
-            { id: 4, title: 'Updated HR Policy on Remote Work', type: 'HR Policy', date: '2025-09-19', status: 'read', department: 'HR' },
-            { id: 5, title: 'Maintenance Job Card #MJC-7891', type: 'Maintenance', date: '2025-09-18', status: 'deadline', department: 'Engineering' },
-            { id: 6, title: 'Purchase Order PO-2025-582', type: 'Procurement', date: '2025-09-17', status: 'read', department: 'Finance' },
-            { id: 7, title: 'Weekly Incident Report Summary', type: 'Report', date: '2025-09-22', status: 'unread', department: 'all' },
-        ] as Document[],
-    };
-
-    // Filter documents based on the user's role and department
-    const filteredDocuments = mockData.documents.filter(doc =>
-        mockData.user.role === 'admin' || doc.department === 'all' || doc.department === mockData.user.department
-    );
-
-    return { user: mockData.user, documents: filteredDocuments };
+    await new Promise(resolve => setTimeout(resolve, 800));
+    const documents: Document[] = [
+        { id: 1, title: 'Q3 Vendor Invoice Batch', type: 'Invoice', date: '2025-09-22', status: 'approval_pending', department: 'Finance' },
+        { id: 2, title: 'New Safety Circular (SC-113)', type: 'Safety Bulletin', date: '2025-09-21', status: 'unread', department: 'Operations' },
+        { id: 3, title: 'Corridor Expansion Environmental Study', type: 'Report', date: '2025-09-20', status: 'read', department: 'Engineering' },
+        { id: 4, title: 'Updated HR Policy on Remote Work', type: 'HR Policy', date: '2025-09-19', status: 'read', department: 'HR' },
+        { id: 5, title: 'Depot HVAC Maintenance Plan', type: 'Maintenance', date: '2025-09-18', status: 'deadline', department: 'Maintenance' },
+        { id: 6, title: 'Purchase Order PO-2025-582', type: 'Procurement', date: '2025-09-17', status: 'read', department: 'Finance' },
+        { id: 7, title: 'Weekly Incident Report Summary', type: 'Report', date: '2025-09-22', status: 'unread', department: 'all' },
+    ];
+    return { documents };
 };
 
 
@@ -99,6 +84,8 @@ const DocumentItem = ({ doc }: { doc: Document }) => {
 // --- Main Dashboard Page Component ---
 
 export default function DashboardPage() {
+    const searchParams = useSearchParams();
+
     // State for storing user data, documents, and loading status
     const [user, setUser] = useState<UserProfile | null>(null);
     const [documents, setDocuments] = useState<Document[]>([]);
@@ -109,9 +96,30 @@ export default function DashboardPage() {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const { user: userData, documents: userDocuments } = await fetchDashboardData();
-                setUser(userData);
-                setDocuments(userDocuments);
+                const { documents } = await fetchDashboardData();
+
+                // Determine department from URL or localStorage
+                const urlDept = (searchParams.get('dept') || '').toLowerCase();
+                let storedUser: any = null;
+                try {
+                    storedUser = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('kmrl_user') || 'null') : null;
+                } catch {}
+
+                const isAdmin = storedUser?.isAdmin || urlDept === 'admin';
+                const departmentLabel = isAdmin ? undefined : (storedUser?.department || (urlDept ? urlDept.charAt(0).toUpperCase() + urlDept.slice(1) : 'Operations'));
+                const currentUser: UserProfile = {
+                    name: storedUser?.name || 'Employee',
+                    role: isAdmin ? 'admin' : 'department',
+                    department: departmentLabel,
+                    deptSlug: isAdmin ? 'admin' : (storedUser?.deptSlug || urlDept || 'operations'),
+                };
+
+                const filtered = documents.filter(doc =>
+                    isAdmin || doc.department.toLowerCase() === currentUser.deptSlug || doc.department === 'all'
+                );
+
+                setUser(currentUser);
+                setDocuments(filtered);
             } catch (error) {
                 console.error("Failed to fetch dashboard data:", error);
                 // Handle error state here, e.g., show an error message
@@ -121,7 +129,8 @@ export default function DashboardPage() {
         };
 
         loadData();
-    }, []); // The empty array [] means this effect runs only once after the component mounts.
+        // Re-run when dept query changes
+    }, [searchParams]);
 
     // If data is loading, show a loading spinner
     if (isLoading) {
@@ -170,8 +179,8 @@ export default function DashboardPage() {
                 {/* Header */}
                 <header className="flex justify-between items-center mb-8">
                     <div>
-                        <h2 className="text-3xl font-bold text-white">Dashboard</h2>
-                        <p className="text-gray-400">Welcome back, {user.name}!</p>
+                        <h2 className="text-3xl font-bold text-white">{user.role === 'admin' ? 'Admin Dashboard' : `${user.department} Dashboard`}</h2>
+                        <p className="text-gray-400">Welcome back, {user.name}! Department: {user.role === 'admin' ? 'Admin' : user.department}</p>
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="relative">

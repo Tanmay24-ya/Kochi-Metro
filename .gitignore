@@ -43,3 +43,8 @@ frontend/.env.local
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Python backend specific ignores
+backend/venv/
+backend/__pycache__/
+backend/.idea/

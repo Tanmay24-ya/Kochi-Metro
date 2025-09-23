@@ -17,7 +17,7 @@ export default function AdminDashboard() {
   return (
     <div className="flex min-h-screen bg-gray-900 text-gray-300">
       <aside className="w-64 bg-gray-950 p-6 flex-shrink-0 flex flex-col">
-        <h1 className="text-2xl font-bold text-white mb-8">Docu <span className="text-blue-500">Sphere</span></h1>
+        <h1 className="text-2xl font-bold text-white mb-8">Docu<span className="text-blue-500">Sphere</span></h1>
         <nav className="flex flex-col gap-4">
           <Link href="/admin" className="bg-gray-800 text-white p-3 rounded-md">Admin Dashboard</Link>
           <Link href={{ pathname: '/documents' }} className="text-gray-400 hover:bg-gray-800 hover:text-white p-3 rounded-md">Documents</Link>

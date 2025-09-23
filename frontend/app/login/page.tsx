@@ -6,6 +6,9 @@ import Link from 'next/link';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { ArrowLeft } from 'lucide-react';
 
+// Base URL for backend API with safe fallback for client-side usage
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:8000').replace(/\/+$/,'');
+
 // Utility: map ID prefix to department slug and label
 const prefixToDept = (id: string) => {
     const u = id.toUpperCase();
@@ -43,28 +46,59 @@ const LoginContent = () => {
             return;
         }
 
-        const dept = prefixToDept(userId);
-        const isAdmin = dept.slug === 'admin';
+        const departmentInfo = prefixToDept(userId);
+        const department = departmentInfo.label; // e.g., "Engineering"
 
-        // Mock auth: Save user context locally for this demo
-        const user = {
-            name: name || userId,
-            userId,
-            department: dept.label,
-            deptSlug: dept.slug,
-            isAdmin,
-        };
+        const skip = parseInt('0', 10);
+        const limit = parseInt('100', 10);
+
+        console.log("Clean Department:", department);
+        console.log("Clean Skip:", skip);
+        console.log("Clean Limit:", limit);
+
         try {
+            // const urlToFetch = `${API_BASE}/users/${encodeURIComponent(userId)}`;
+            const urlToFetch = `${API_BASE}/documents/${encodeURIComponent(department)}?skip=${skip}&limit=${limit}`;
+
+            // ADD THIS LINE
+            console.log("Attempting to fetch from URL:", urlToFetch);
+
+            // let response = await fetch(urlToFetch, { method: 'GET' });
+
+            const response = await fetch(urlToFetch);
+
+            if (!response.ok) {
+                setError(`Failed to fetch documents for department: ${department}`);
+                return;
+            }
+
+            console.log("Connection successful! Simulating login.");
+
+            const isAdmin = departmentInfo.slug === 'admin';
+
+            // Mock auth: Save user context locally
+            const user = {
+                name: name || userId,
+                userId: userId,
+                department: department,
+                deptSlug: departmentInfo.slug,
+                isAdmin,
+            };
+
             if (typeof window !== 'undefined') {
                 localStorage.setItem('kmrl_user', JSON.stringify(user));
             }
-        } catch {}
 
-        // Redirect rules per requirement
-        if (isAdmin) {
-            router.push('/admin');
-        } else {
-            router.push(`/dashboard?dept=${dept.slug}`);
+            // Redirect rules
+            if (isAdmin) {
+                router.push('/admin');
+            } else {
+                router.push(`/dashboard?dept=${departmentInfo.slug}`);
+            }
+
+        } catch (err) {
+            setError('Failed to connect to the backend. Is the server running and CORS configured?');
+            console.error(err);
         }
     };
 

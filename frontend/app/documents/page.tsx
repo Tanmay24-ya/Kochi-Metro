@@ -8,6 +8,9 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+// Base URL for backend API with safe fallback for client-side usage
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:8000').replace(/\/+$/,'');
+
 // --- Define Types for our Data ---
 type Document = {
     id: number;
@@ -23,18 +26,18 @@ type Document = {
 };
 
 // --- API Simulation ---
-const fetchDocumentsData = async (): Promise<Document[]> => {
-    console.log("Fetching documents from backend...");
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    // In a real app, this would be a filtered list based on the user's permissions.
-    return [
-        { id: 1, title: 'Q3 Vendor Invoice Batch', title_ml: 'Q3 വെണ്ടർ ഇൻവോയ്സ് ബാച്ച്', type: 'Invoice', date: '2025-09-22', status: 'approval_pending', department: 'Finance', summary: 'A batch of 48 invoices from Q3 totaling $152,840. Awaiting approval from the finance head. Three invoices are flagged for discrepancies.', summary_ml: 'Q3-ൽ നിന്നുള്ള 48 ഇൻവോയിസുകളുടെ ഒരു ബാച്ച്, ആകെ $152,840. ഫിനാൻസ് മേധാവിയുടെ അംഗീകാരത്തിനായി കാത്തിരിക്കുന്നു. മൂന്ന് ഇൻവോയിസുകളിൽ പൊരുത്തക്കേടുകൾ കണ്ടെത്തിയിട്ടുണ്ട്.', previewUrl: 'https://placehold.co/800x1131/1f2937/a0aec0?text=Invoice+PDF' },
-        { id: 2, title: 'New Safety Circular (SC-113)', title_ml: 'പുതിയ സുരക്ഷാ സർക്കുലർ (SC-113)', type: 'Safety Bulletin', date: '2025-09-21', status: 'unread', department: 'Operations', summary: 'Mandatory update to platform safety protocols regarding passenger boarding during peak hours. All station masters must acknowledge receipt by EOD.', summary_ml: 'തിരക്കേറിയ സമയങ്ങളിൽ യാത്രക്കാർ കയറുന്നത് സംബന്ധിച്ച പ്ലാറ്റ്ഫോം സുരക്ഷാ പ്രോട്ടോക്കോളുകളിൽ നിർബന്ധിത അപ്ഡേറ്റ്. എല്ലാ സ്റ്റേഷൻ മാസ്റ്റർമാരും രസീത് അംഗീകരിക്കണം.', previewUrl: 'https://placehold.co/800x1131/1f2937/a0aec0?text=Circular' },
-        { id: 3, title: 'Corridor Expansion Study', title_ml: 'ഇടനാഴി വിപുലീകരണ പഠനം', type: 'Report', date: '2025-09-20', status: 'read', department: 'Engineering', summary: 'Feasibility study for the Phase II corridor expansion. Highlights geological challenges and recommends a revised route. Estimated cost increase of 8%.', summary_ml: 'ഘട്ടം II ഇടനാഴി വിപുലീകരണത്തിനുള്ള സാധ്യതാ പഠനം. ഭൗമശാസ്ത്രപരമായ വെല്ലുവിളികൾ എടുത്തു കാണിക്കുകയും പരിഷ്കരിച്ച റൂട്ട് ശുപാർശ ചെയ്യുകയും ചെയ്യുന്നു. 8% ചെലവ് വർദ്ധനവ് കണക്കാക്കുന്നു.' },
-        { id: 4, title: 'Updated HR Policy on Remote Work', title_ml: 'റിമോട്ട് വർക്കിനെക്കുറിച്ചുള്ള പുതിയ എച്ച്ആർ നയം', type: 'HR Policy', date: '2025-09-19', status: 'read', department: 'HR', summary: 'Revised guidelines for remote and hybrid work arrangements, effective October 1st. Includes new eligibility criteria and application process.', summary_ml: 'ഒക്ടോബർ 1 മുതൽ പ്രാബല്യത്തിൽ വരുന്ന റിമോട്ട്, ഹൈബ്രിഡ് വർക്ക് ക്രമീകരണങ്ങൾക്കുള്ള പുതുക്കിയ മാർഗ്ഗനിർദ്ദേശങ്ങൾ. പുതിയ യോഗ്യതാ മാനദണ്ഡങ്ങളും അപേക്ഷാ പ്രക്രിയയും ഉൾപ്പെടുന്നു.' },
-        { id: 5, title: 'Job Card #MJC-7891', title_ml: 'ജോലി കാർഡ് #MJC-7891', type: 'Maintenance', date: '2025-09-18', status: 'deadline', department: 'Engineering', summary: 'Urgent maintenance required for the HVAC unit on Train Car 04. Deadline for completion is 2025-09-25. Parts have been dispatched.', summary_ml: 'ട്രെയിൻ കാർ 04-ലെ എച്ച്‌വിഎസി യൂണിറ്റിന് അടിയന്തര അറ്റകുറ്റപ്പണി ആവശ്യമാണ്. പൂർത്തിയാക്കാനുള്ള അവസാന തീയതി 2025-09-25. ഭാഗങ്ങൾ അയച്ചിട്ടുണ്ട്.' },
-    ];
-};
+// const fetchDocumentsData = async (): Promise<Document[]> => {
+//     console.log("Fetching documents from backend...");
+//     await new Promise(resolve => setTimeout(resolve, 1000));
+//     // In a real app, this would be a filtered list based on the user's permissions.
+//     return [
+//         { id: 1, title: 'Q3 Vendor Invoice Batch', title_ml: 'Q3 വെണ്ടർ ഇൻവോയ്സ് ബാച്ച്', type: 'Invoice', date: '2025-09-22', status: 'approval_pending', department: 'Finance', summary: 'A batch of 48 invoices from Q3 totaling $152,840. Awaiting approval from the finance head. Three invoices are flagged for discrepancies.', summary_ml: 'Q3-ൽ നിന്നുള്ള 48 ഇൻവോയിസുകളുടെ ഒരു ബാച്ച്, ആകെ $152,840. ഫിനാൻസ് മേധാവിയുടെ അംഗീകാരത്തിനായി കാത്തിരിക്കുന്നു. മൂന്ന് ഇൻവോയിസുകളിൽ പൊരുത്തക്കേടുകൾ കണ്ടെത്തിയിട്ടുണ്ട്.', previewUrl: 'https://placehold.co/800x1131/1f2937/a0aec0?text=Invoice+PDF' },
+//         { id: 2, title: 'New Safety Circular (SC-113)', title_ml: 'പുതിയ സുരക്ഷാ സർക്കുലർ (SC-113)', type: 'Safety Bulletin', date: '2025-09-21', status: 'unread', department: 'Operations', summary: 'Mandatory update to platform safety protocols regarding passenger boarding during peak hours. All station masters must acknowledge receipt by EOD.', summary_ml: 'തിരക്കേറിയ സമയങ്ങളിൽ യാത്രക്കാർ കയറുന്നത് സംബന്ധിച്ച പ്ലാറ്റ്ഫോം സുരക്ഷാ പ്രോട്ടോക്കോളുകളിൽ നിർബന്ധിത അപ്ഡേറ്റ്. എല്ലാ സ്റ്റേഷൻ മാസ്റ്റർമാരും രസീത് അംഗീകരിക്കണം.', previewUrl: 'https://placehold.co/800x1131/1f2937/a0aec0?text=Circular' },
+//         { id: 3, title: 'Corridor Expansion Study', title_ml: 'ഇടനാഴി വിപുലീകരണ പഠനം', type: 'Report', date: '2025-09-20', status: 'read', department: 'Engineering', summary: 'Feasibility study for the Phase II corridor expansion. Highlights geological challenges and recommends a revised route. Estimated cost increase of 8%.', summary_ml: 'ഘട്ടം II ഇടനാഴി വിപുലീകരണത്തിനുള്ള സാധ്യതാ പഠനം. ഭൗമശാസ്ത്രപരമായ വെല്ലുവിളികൾ എടുത്തു കാണിക്കുകയും പരിഷ്കരിച്ച റൂട്ട് ശുപാർശ ചെയ്യുകയും ചെയ്യുന്നു. 8% ചെലവ് വർദ്ധനവ് കണക്കാക്കുന്നു.' },
+//         { id: 4, title: 'Updated HR Policy on Remote Work', title_ml: 'റിമോട്ട് വർക്കിനെക്കുറിച്ചുള്ള പുതിയ എച്ച്ആർ നയം', type: 'HR Policy', date: '2025-09-19', status: 'read', department: 'HR', summary: 'Revised guidelines for remote and hybrid work arrangements, effective October 1st. Includes new eligibility criteria and application process.', summary_ml: 'ഒക്ടോബർ 1 മുതൽ പ്രാബല്യത്തിൽ വരുന്ന റിമോട്ട്, ഹൈബ്രിഡ് വർക്ക് ക്രമീകരണങ്ങൾക്കുള്ള പുതുക്കിയ മാർഗ്ഗനിർദ്ദേശങ്ങൾ. പുതിയ യോഗ്യതാ മാനദണ്ഡങ്ങളും അപേക്ഷാ പ്രക്രിയയും ഉൾപ്പെടുന്നു.' },
+//         { id: 5, title: 'Job Card #MJC-7891', title_ml: 'ജോലി കാർഡ് #MJC-7891', type: 'Maintenance', date: '2025-09-18', status: 'deadline', department: 'Engineering', summary: 'Urgent maintenance required for the HVAC unit on Train Car 04. Deadline for completion is 2025-09-25. Parts have been dispatched.', summary_ml: 'ട്രെയിൻ കാർ 04-ലെ എച്ച്‌വിഎസി യൂണിറ്റിന് അടിയന്തര അറ്റകുറ്റപ്പണി ആവശ്യമാണ്. പൂർത്തിയാക്കാനുള്ള അവസാന തീയതി 2025-09-25. ഭാഗങ്ങൾ അയച്ചിട്ടുണ്ട്.' },
+//     ];
+// };
 
 
 // --- Reusable Components ---
@@ -124,14 +127,49 @@ export default function DocumentsPage() {
             const admin = storedUser?.isAdmin || urlDept === 'admin';
             setIsAdmin(admin);
             setDeptSlug(admin ? 'admin' : (storedUser?.deptSlug || urlDept || 'operations'));
-            const base = await fetchDocumentsData();
-            let uploads: Record<string, Document[]> = {};
             try {
-                uploads = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('kmrl_uploads') || '{}') : {};
-            } catch {}
-            const merged = [...base, ...(admin ? Object.values(uploads).flat() : (uploads[(storedUser?.department || '').toString()] || uploads[(storedUser?.deptSlug || urlDept || '')] || []))];
-            setDocuments(merged);
-            setIsLoading(false);
+                let fetchUrl = '';
+
+                // --- THIS IS THE KEY LOGIC CHANGE ---
+                if (admin) {
+                    // If the user is an admin, call the new "get all" endpoint.
+                    fetchUrl = `${API_BASE}/documents/?skip=0&limit=100`;
+                } else {
+                    // Otherwise, get the department-specific documents.
+                    const deptToFetch = storedUser?.department || 'Operations';
+                    fetchUrl = `${API_BASE}/documents/${encodeURIComponent(deptToFetch)}`;
+                }
+                // --- END OF LOGIC CHANGE ---
+
+                console.log("Fetching documents from:", fetchUrl); // Good for debugging
+                const response = await fetch(fetchUrl);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch documents');
+                }
+                const backendDocs = await response.json();
+
+                // Map backend documents to the frontend Document shape
+                const mappedDocs: Document[] = (backendDocs || []).map((d: any) => ({
+                    id: typeof d.id === 'string' ? d.id : Number(d.id) || Date.now(),
+                    title: d.title,
+                    title_ml: d.title, // fallback
+                    type: 'Upload', // backend does not provide type; defaulting
+                    date: d.upload_date ? new Date(d.upload_date).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10),
+                    status: 'unread', // default
+                    department: d.department || 'Operations',
+                    summary: 'Uploaded document.',
+                    summary_ml: 'അപ്‌ലോഡ് ചെയ്ത രേഖ.',
+                    previewUrl: undefined,
+                }));
+
+                setDocuments(mappedDocs);
+
+            } catch (err) {
+                console.error(err);
+                // Handle fetch error, e.g., show a message to the user
+            } finally {
+                setIsLoading(false);
+            }
         };
         init();
     }, [searchParams]);
@@ -330,11 +368,49 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept }: { onClos
     const [file, setFile] = useState<File | null>(null);
     const [dept, setDept] = useState(currentDept);
 
-    const submit = (e: React.FormEvent) => {
+    const submit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!title.trim()) return;
-        onUpload({ title: title.trim(), file, department: dept });
-        onClose();
+        if (!title.trim() || !file) {
+            alert('Title and file are required.');
+            return;
+        }
+        let user: any = null;
+        try {
+            user = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('kmrl_user') || 'null') : null;
+        } catch {}
+
+        if (!user) {
+            alert('Could not find user info. Please log in again.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('title', title.trim());
+        formData.append('department', dept);
+        formData.append('user_id', user.userId); // Get user ID from our mock session
+        formData.append('file', file);
+
+        try {
+            const response = await fetch(`${API_BASE}/documents/upload`, {
+                method: 'POST',
+                body: formData,
+                // DO NOT set Content-Type header, the browser does it for you with FormData
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Upload failed');
+            }
+
+            const result = await response.json();
+            onUpload(result.document_info); // Pass the new document data back to the page
+            onClose();
+
+        } catch (err: any) {
+            alert(`Error: ${err.message}`);
+            console.error(err);
+        }
+
     };
 
     return (

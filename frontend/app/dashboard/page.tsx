@@ -161,7 +161,7 @@ export default function DashboardPage() {
         <div className="flex min-h-screen bg-gray-900 text-gray-300">
             {/* Sidebar Navigation */}
             <aside className="w-64 bg-gray-950 p-6 flex-shrink-0 flex flex-col">
-                <h1 className="text-2xl font-bold text-white mb-8">KMRL <span className="text-blue-500">Hub</span></h1>
+                <h1 className="text-2xl font-bold text-white mb-8">Docu <span className="text-blue-500">Sphere</span></h1>
                 <nav className="flex flex-col gap-4">
                     <a href="/dashboard" className="bg-gray-800 text-white p-3 rounded-md">Dashboard</a>
                     <a href="/documents" className="text-gray-400 hover:bg-gray-800 hover:text-white p-3 rounded-md">Documents</a>

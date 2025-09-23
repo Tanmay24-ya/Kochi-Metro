@@ -21,7 +21,7 @@ export default function LandingPage() {
             <header className="bg-gray-950 shadow-md">
                 <div className="container mx-auto px-6 py-4 flex justify-between items-center">
                     <Link href="/" className="text-3xl font-extrabold text-white">
-                        KMRL <span className="text-blue-500">Intelligence Hub</span>
+                        Docu <span className="text-blue-500">Sphere</span>
                     </Link>
                     <nav className="space-x-4">
                         <Link href="/login?role=department" className="text-gray-300 hover:text-blue-400 transition-colors text-lg px-4 py-2 rounded-md">
@@ -35,28 +35,7 @@ export default function LandingPage() {
             </header>
 
             {/* Hero Section */}
-            {/*<main className="relative h-screen flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: "url('/pattern.png')" }}>*/}
-            {/*    /!* Overlay for better text readability *!/*/}
-            {/*    <div className="absolute inset-0 bg-black opacity-70"></div>*/}
-            {/*    <div className="relative z-10 container mx-auto px-6 text-center text-white">*/}
-            {/*        <h2 className="text-5xl md:text-6xl font-extrabold leading-tight drop-shadow-lg animate-fade-in-up">*/}
-            {/*            Seamless Information, Smarter Decisions*/}
-            {/*        </h2>*/}
-            {/*        <p className="mt-6 text-xl text-gray-300 max-w-4xl mx-auto drop-shadow-md animate-fade-in-up delay-200">*/}
-            {/*            KMRL's Intelligence Hub transforms vast quantities of documents into precise, actionable intelligence,*/}
-            {/*            empowering every stakeholder to drive efficiency and uphold operational excellence.*/}
-            {/*        </p>*/}
-            {/*        <div className="mt-12 flex flex-col sm:flex-row justify-center gap-6 animate-fade-in-up delay-400">*/}
-            {/*            <Link href="/login?role=department" className="bg-blue-600 text-white text-xl px-10 py-4 rounded-full font-bold hover:bg-blue-700 transition-transform transform hover:scale-105 shadow-xl">*/}
-            {/*                Login as Department*/}
-            {/*            </Link>*/}
-            {/*            <Link href="/login?role=admin" className="bg-gray-700 text-white text-xl px-10 py-4 rounded-full font-bold hover:bg-gray-600 transition-transform transform hover:scale-105 shadow-xl">*/}
-            {/*                Login as Admin*/}
-            {/*            </Link>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*</main>*/}
-            <main className="relative h-screen flex items-center justify-center bg-scroll-animation" style={{ backgroundImage: "url('/animated-bg.gif')" }}>
+            <main className="relative h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/animated-bg.gif')" }}>
                 {/* Overlay for better text readability */}
                 <div className="absolute inset-0 bg-black opacity-70"></div>
                 <div className="relative z-10 container mx-auto px-6 text-center text-white">
@@ -64,7 +43,7 @@ export default function LandingPage() {
                         Seamless Information, Smarter Decisions
                     </h2>
                     <p className="mt-6 text-xl text-gray-300 max-w-4xl mx-auto drop-shadow-md animate-fade-in-up delay-200">
-                        KMRL's Intelligence Hub transforms vast quantities of documents into precise, actionable intelligence,
+                        Docu Sphere transforms vast quantities of documents into precise, actionable intelligence,
                         empowering every stakeholder to drive efficiency and uphold operational excellence.
                     </p>
                     <div className="mt-12 flex flex-col sm:flex-row justify-center gap-6 animate-fade-in-up delay-400">
@@ -83,7 +62,7 @@ export default function LandingPage() {
                 <div className="container mx-auto px-6 text-center">
                     <h3 className="text-4xl font-bold text-white mb-6 animate-fade-in-up">The Challenge: Navigating Information Chaos</h3>
                     <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-12 animate-fade-in-up delay-100">
-                        In a complex operation like KMRL, critical information is constantly generated across diverse formats and departments.
+                        In a complex operation, critical information is constantly generated across diverse formats and departments.
                         Without a unified system, this creates significant bottlenecks and risks.
                     </p>
                     <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
@@ -133,7 +112,7 @@ export default function LandingPage() {
                             Eliminate manual summarization and reporting, allowing teams to focus on strategic initiatives.
                         </FeatureCard>
                         <FeatureCard icon={<Lightbulb size={28} />} title="Future-Proof Scalability">
-                            Designed to integrate emerging technologies like IoT and UNS, ready for KMRL's future expansion.
+                            Designed to integrate emerging technologies like IoT and UNS, ready for future expansion.
                         </FeatureCard>
                     </div>
                 </div>
@@ -160,10 +139,11 @@ export default function LandingPage() {
             {/* Footer */}
             <footer className="bg-gray-950 text-gray-400 py-8">
                 <div className="container mx-auto px-6 text-center">
-                    <p className="mb-2">&copy; {new Date().getFullYear()} Kochi Metro Rail Limited. All Rights Reserved.</p>
-                    <p className="text-sm">Empowering KMRL with Intelligent Document Solutions.</p>
+                    <p className="mb-2">&copy; {new Date().getFullYear()} Docu Sphere. All Rights Reserved.</p>
+                    <p className="text-sm">Empowering Kochi Metro with Intelligent Document Solutions.</p>
                 </div>
             </footer>
         </div>
     );
 }
+

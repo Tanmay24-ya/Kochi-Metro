@@ -1,10 +1,13 @@
 # backend/models.py
 import uuid
+from sqlalchemy.ext.declarative import declarative_base # <-- This line is important
 from sqlalchemy import Column, String, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from database import Base
+# The incorrect import is now gone
 import datetime
+
+Base = declarative_base() # <-- This line correctly creates the Base
 
 class User(Base):
     __tablename__ = "users"

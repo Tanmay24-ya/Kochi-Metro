@@ -84,10 +84,10 @@ function LandingPage() {
                             href: "/",
                             className: "text-3xl font-extrabold text-white",
                             children: [
-                                "KMRL ",
+                                "Docu ",
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     className: "text-blue-500",
-                                    children: "Intelligence Hub"
+                                    children: "Sphere"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/page.tsx",
                                     lineNumber: 24,
@@ -138,7 +138,7 @@ function LandingPage() {
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
-                className: "relative h-screen flex items-center justify-center bg-scroll-animation",
+                className: "relative h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat",
                 style: {
                     backgroundImage: "url('/animated-bg.gif')"
                 },
@@ -147,7 +147,7 @@ function LandingPage() {
                         className: "absolute inset-0 bg-black opacity-70"
                     }, void 0, false, {
                         fileName: "[project]/frontend/app/page.tsx",
-                        lineNumber: 61,
+                        lineNumber: 40,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -158,15 +158,15 @@ function LandingPage() {
                                 children: "Seamless Information, Smarter Decisions"
                             }, void 0, false, {
                                 fileName: "[project]/frontend/app/page.tsx",
-                                lineNumber: 63,
+                                lineNumber: 42,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "mt-6 text-xl text-gray-300 max-w-4xl mx-auto drop-shadow-md animate-fade-in-up delay-200",
-                                children: "KMRL's Intelligence Hub transforms vast quantities of documents into precise, actionable intelligence, empowering every stakeholder to drive efficiency and uphold operational excellence."
+                                children: "Docu Sphere transforms vast quantities of documents into precise, actionable intelligence, empowering every stakeholder to drive efficiency and uphold operational excellence."
                             }, void 0, false, {
                                 fileName: "[project]/frontend/app/page.tsx",
-                                lineNumber: 66,
+                                lineNumber: 45,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -178,7 +178,7 @@ function LandingPage() {
                                         children: "Login as Department"
                                     }, void 0, false, {
                                         fileName: "[project]/frontend/app/page.tsx",
-                                        lineNumber: 71,
+                                        lineNumber: 50,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
@@ -187,25 +187,25 @@ function LandingPage() {
                                         children: "Login as Admin"
                                     }, void 0, false, {
                                         fileName: "[project]/frontend/app/page.tsx",
-                                        lineNumber: 74,
+                                        lineNumber: 53,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/frontend/app/page.tsx",
-                                lineNumber: 70,
+                                lineNumber: 49,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/frontend/app/page.tsx",
-                        lineNumber: 62,
+                        lineNumber: 41,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/frontend/app/page.tsx",
-                lineNumber: 59,
+                lineNumber: 38,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -218,15 +218,15 @@ function LandingPage() {
                             children: "The Challenge: Navigating Information Chaos"
                         }, void 0, false, {
                             fileName: "[project]/frontend/app/page.tsx",
-                            lineNumber: 84,
+                            lineNumber: 63,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                             className: "text-lg text-gray-400 max-w-3xl mx-auto mb-12 animate-fade-in-up delay-100",
-                            children: "In a complex operation like KMRL, critical information is constantly generated across diverse formats and departments. Without a unified system, this creates significant bottlenecks and risks."
+                            children: "In a complex operation, critical information is constantly generated across diverse formats and departments. Without a unified system, this creates significant bottlenecks and risks."
                         }, void 0, false, {
                             fileName: "[project]/frontend/app/page.tsx",
-                            lineNumber: 85,
+                            lineNumber: 64,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -240,7 +240,7 @@ function LandingPage() {
                                             children: "Information Overload"
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/page.tsx",
-                                            lineNumber: 91,
+                                            lineNumber: 70,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -248,13 +248,13 @@ function LandingPage() {
                                             children: "Thousands of documents—engineering drawings, incident reports, invoices, regulatory directives—arrive daily. This sheer volume overwhelms front-line managers, delaying crucial decisions on train availability, contractor payments, and staffing."
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/page.tsx",
-                                            lineNumber: 92,
+                                            lineNumber: 71,
                                             columnNumber: 29
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/frontend/app/page.tsx",
-                                    lineNumber: 90,
+                                    lineNumber: 69,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -265,7 +265,7 @@ function LandingPage() {
                                             children: "Siloed Knowledge & Risks"
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/page.tsx",
-                                            lineNumber: 99,
+                                            lineNumber: 78,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -273,30 +273,30 @@ function LandingPage() {
                                             children: "Critical updates get buried, leading to missed deadlines, audit non-conformities, and lost institutional memory when personnel transfer. Duplicate efforts waste valuable time and resources."
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/page.tsx",
-                                            lineNumber: 100,
+                                            lineNumber: 79,
                                             columnNumber: 29
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/frontend/app/page.tsx",
-                                    lineNumber: 98,
+                                    lineNumber: 77,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/page.tsx",
-                            lineNumber: 89,
+                            lineNumber: 68,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/frontend/app/page.tsx",
-                    lineNumber: 83,
+                    lineNumber: 62,
                     columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/frontend/app/page.tsx",
-                lineNumber: 82,
+                lineNumber: 61,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -312,7 +312,7 @@ function LandingPage() {
                                     children: "Our Solution: Intelligent Document Hub"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/page.tsx",
-                                    lineNumber: 113,
+                                    lineNumber: 92,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -320,13 +320,13 @@ function LandingPage() {
                                     children: "We empower every stakeholder with rapid, trustworthy snapshots of the documents that matter to them, preserving traceability to the original source."
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/page.tsx",
-                                    lineNumber: 114,
+                                    lineNumber: 93,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/page.tsx",
-                            lineNumber: 112,
+                            lineNumber: 91,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -337,14 +337,14 @@ function LandingPage() {
                                         size: 28
                                     }, void 0, false, {
                                         fileName: "[project]/frontend/app/page.tsx",
-                                        lineNumber: 120,
+                                        lineNumber: 99,
                                         columnNumber: 44
                                     }, void 0),
                                     title: "Real-time Insights",
                                     children: "Get instant, actionable summaries of lengthy documents, accelerating decision-making across all departments."
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/page.tsx",
-                                    lineNumber: 120,
+                                    lineNumber: 99,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(FeatureCard, {
@@ -352,14 +352,14 @@ function LandingPage() {
                                         size: 28
                                     }, void 0, false, {
                                         fileName: "[project]/frontend/app/page.tsx",
-                                        lineNumber: 123,
+                                        lineNumber: 102,
                                         columnNumber: 44
                                     }, void 0),
                                     title: "Seamless Collaboration",
                                     children: "Break down departmental silos with cross-functional information sharing and unified awareness."
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/page.tsx",
-                                    lineNumber: 123,
+                                    lineNumber: 102,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(FeatureCard, {
@@ -367,14 +367,14 @@ function LandingPage() {
                                         size: 28
                                     }, void 0, false, {
                                         fileName: "[project]/frontend/app/page.tsx",
-                                        lineNumber: 126,
+                                        lineNumber: 105,
                                         columnNumber: 44
                                     }, void 0),
                                     title: "Enhanced Compliance",
                                     children: "Automate tracking of regulatory updates, ensuring timely responses and audit readiness."
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/page.tsx",
-                                    lineNumber: 126,
+                                    lineNumber: 105,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(FeatureCard, {
@@ -382,14 +382,14 @@ function LandingPage() {
                                         size: 28
                                     }, void 0, false, {
                                         fileName: "[project]/frontend/app/page.tsx",
-                                        lineNumber: 129,
+                                        lineNumber: 108,
                                         columnNumber: 44
                                     }, void 0),
                                     title: "Knowledge Preservation",
                                     children: "Transform static files into a dynamic, searchable knowledge base, safeguarding institutional memory."
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/page.tsx",
-                                    lineNumber: 129,
+                                    lineNumber: 108,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(FeatureCard, {
@@ -397,14 +397,14 @@ function LandingPage() {
                                         size: 28
                                     }, void 0, false, {
                                         fileName: "[project]/frontend/app/page.tsx",
-                                        lineNumber: 132,
+                                        lineNumber: 111,
                                         columnNumber: 44
                                     }, void 0),
                                     title: "Boosted Productivity",
                                     children: "Eliminate manual summarization and reporting, allowing teams to focus on strategic initiatives."
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/page.tsx",
-                                    lineNumber: 132,
+                                    lineNumber: 111,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(FeatureCard, {
@@ -412,31 +412,31 @@ function LandingPage() {
                                         size: 28
                                     }, void 0, false, {
                                         fileName: "[project]/frontend/app/page.tsx",
-                                        lineNumber: 135,
+                                        lineNumber: 114,
                                         columnNumber: 44
                                     }, void 0),
                                     title: "Future-Proof Scalability",
-                                    children: "Designed to integrate emerging technologies like IoT and UNS, ready for KMRL's future expansion."
+                                    children: "Designed to integrate emerging technologies like IoT and UNS, ready for future expansion."
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/page.tsx",
-                                    lineNumber: 135,
+                                    lineNumber: 114,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/page.tsx",
-                            lineNumber: 119,
+                            lineNumber: 98,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/frontend/app/page.tsx",
-                    lineNumber: 111,
+                    lineNumber: 90,
                     columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/frontend/app/page.tsx",
-                lineNumber: 110,
+                lineNumber: 89,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -449,7 +449,7 @@ function LandingPage() {
                             children: "Ready to Transform Your Operations?"
                         }, void 0, false, {
                             fileName: "[project]/frontend/app/page.tsx",
-                            lineNumber: 145,
+                            lineNumber: 124,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -457,7 +457,7 @@ function LandingPage() {
                             children: "Experience the power of streamlined information management. Log in to your dedicated portal."
                         }, void 0, false, {
                             fileName: "[project]/frontend/app/page.tsx",
-                            lineNumber: 146,
+                            lineNumber: 125,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -469,7 +469,7 @@ function LandingPage() {
                                     children: "Department Access"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/page.tsx",
-                                    lineNumber: 150,
+                                    lineNumber: 129,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
@@ -478,24 +478,24 @@ function LandingPage() {
                                     children: "Admin Access"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/page.tsx",
-                                    lineNumber: 153,
+                                    lineNumber: 132,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/page.tsx",
-                            lineNumber: 149,
+                            lineNumber: 128,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/frontend/app/page.tsx",
-                    lineNumber: 144,
+                    lineNumber: 123,
                     columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/frontend/app/page.tsx",
-                lineNumber: 143,
+                lineNumber: 122,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("footer", {
@@ -508,30 +508,30 @@ function LandingPage() {
                             children: [
                                 "© ",
                                 new Date().getFullYear(),
-                                " Kochi Metro Rail Limited. All Rights Reserved."
+                                " Docu Sphere. All Rights Reserved."
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/page.tsx",
-                            lineNumber: 163,
+                            lineNumber: 142,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                             className: "text-sm",
-                            children: "Empowering KMRL with Intelligent Document Solutions."
+                            children: "Empowering Kochi Metro with Intelligent Document Solutions."
                         }, void 0, false, {
                             fileName: "[project]/frontend/app/page.tsx",
-                            lineNumber: 164,
+                            lineNumber: 143,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/frontend/app/page.tsx",
-                    lineNumber: 162,
+                    lineNumber: 141,
                     columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/frontend/app/page.tsx",
-                lineNumber: 161,
+                lineNumber: 140,
                 columnNumber: 13
             }, this)
         ]

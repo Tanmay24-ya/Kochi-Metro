@@ -149,6 +149,7 @@
     --text-5xl--line-height: 1;
     --text-6xl: 3.75rem;
     --text-6xl--line-height: 1;
+    --font-weight-medium: 500;
     --font-weight-semibold: 600;
     --font-weight-bold: 700;
     --font-weight-extrabold: 800;
@@ -735,6 +736,10 @@
     display: inline-flex;
   }
 
+  .aspect-\[4\/5\] {
+    aspect-ratio: 4 / 5;
+  }
+
   .h-40 {
     height: calc(var(--spacing) * 40);
   }
@@ -785,6 +790,10 @@
 
   .max-w-md {
     max-width: var(--container-md);
+  }
+
+  .max-w-none {
+    max-width: none;
   }
 
   .flex-1 {
@@ -930,6 +939,10 @@
     overflow-y: auto;
   }
 
+  .rounded {
+    border-radius: .25rem;
+  }
+
   .rounded-2xl {
     border-radius: var(--radius-2xl);
   }
@@ -954,6 +967,11 @@
   .border-2 {
     border-style: var(--tw-border-style);
     border-width: 2px;
+  }
+
+  .border-b {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 1px;
   }
 
   .border-dashed {
@@ -1033,6 +1051,14 @@
     background-position: center;
   }
 
+  .bg-no-repeat {
+    background-repeat: no-repeat;
+  }
+
+  .object-cover {
+    object-fit: cover;
+  }
+
   .p-1 {
     padding: calc(var(--spacing) * 1);
   }
@@ -1055,6 +1081,10 @@
 
   .p-8 {
     padding: calc(var(--spacing) * 8);
+  }
+
+  .px-2 {
+    padding-inline: calc(var(--spacing) * 2);
   }
 
   .px-3 {
@@ -1194,6 +1224,11 @@
   .font-extrabold {
     --tw-font-weight: var(--font-weight-extrabold);
     font-weight: var(--font-weight-extrabold);
+  }
+
+  .font-medium {
+    --tw-font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-medium);
   }
 
   .font-semibold {
@@ -1465,6 +1500,18 @@
   }
 
   @media (min-width: 48rem) {
+    .md\:h-5\/6 {
+      height: 83.3333%;
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .md\:w-11\/12 {
+      width: 91.6667%;
+    }
+  }
+
+  @media (min-width: 48rem) {
     .md\:grid-cols-2 {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -1485,6 +1532,12 @@
   @media (min-width: 48rem) {
     .md\:items-center {
       align-items: center;
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .md\:rounded-lg {
+      border-radius: var(--radius-lg);
     }
   }
 

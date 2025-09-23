@@ -82,7 +82,7 @@ const LoginContent = () => {
             <div className="w-full max-w-md p-8 space-y-8 bg-gray-950 rounded-2xl shadow-2xl">
                 <div className="text-center">
                     <Link href="/" className="text-3xl font-extrabold text-white">
-                        KMRL <span className="text-blue-500">Intelligence Hub</span>
+                        Docu <span className="text-blue-500">Sphere</span>
                     </Link>
                     <h2 className="mt-4 text-2xl font-bold text-gray-300 capitalize">
                         {role} Portal Access

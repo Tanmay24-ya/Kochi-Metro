@@ -57,7 +57,6 @@ const LoginContent = () => {
         console.log("Clean Limit:", limit);
 
         try {
-            // const urlToFetch = `${API_BASE}/users/${encodeURIComponent(userId)}`;
             const urlToFetch = `${API_BASE}/documents/${encodeURIComponent(department)}?skip=${skip}&limit=${limit}`;
 
             // ADD THIS LINE

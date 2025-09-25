@@ -1,5 +1,41 @@
 {
   "pages": {
+    "/dashboard/page": [
+      "static/chunks/node_modules_next_dist_8db7fb1f._.js",
+      "static/chunks/frontend_app_favicon_ico_mjs_e52104ae._.js",
+      "static/chunks/[root-of-the-server]__b2a040c4._.css",
+      "static/chunks/frontend_app_layout_tsx_0a548d63._.js",
+      "static/chunks/node_modules_next_dist_client_components_builtin_global-error_469928a3.js",
+      "static/chunks/_28b6c2ca._.js",
+      "static/chunks/frontend_app_dashboard_page_tsx_469928a3._.js",
+      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_57d40746._.js",
+      "static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js",
+      "static/chunks/node_modules_next_dist_compiled_next-devtools_index_a9cb0712.js",
+      "static/chunks/node_modules_next_dist_compiled_5150ccfd._.js",
+      "static/chunks/node_modules_next_dist_client_cf1d9188._.js",
+      "static/chunks/node_modules_next_dist_b0daae9a._.js",
+      "static/chunks/node_modules_@swc_helpers_cjs_b3dc30d6._.js",
+      "static/chunks/frontend_a0ff3932._.js",
+      "static/chunks/turbopack-frontend_cdba956c._.js"
+    ],
+    "/documents/page": [
+      "static/chunks/node_modules_next_dist_8db7fb1f._.js",
+      "static/chunks/frontend_app_favicon_ico_mjs_e52104ae._.js",
+      "static/chunks/[root-of-the-server]__b2a040c4._.css",
+      "static/chunks/frontend_app_layout_tsx_0a548d63._.js",
+      "static/chunks/node_modules_next_dist_client_components_builtin_global-error_469928a3.js",
+      "static/chunks/_90671b28._.js",
+      "static/chunks/frontend_app_documents_page_tsx_469928a3._.js",
+      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_57d40746._.js",
+      "static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js",
+      "static/chunks/node_modules_next_dist_compiled_next-devtools_index_a9cb0712.js",
+      "static/chunks/node_modules_next_dist_compiled_5150ccfd._.js",
+      "static/chunks/node_modules_next_dist_client_cf1d9188._.js",
+      "static/chunks/node_modules_next_dist_b0daae9a._.js",
+      "static/chunks/node_modules_@swc_helpers_cjs_b3dc30d6._.js",
+      "static/chunks/frontend_a0ff3932._.js",
+      "static/chunks/turbopack-frontend_cdba956c._.js"
+    ],
     "/login/page": [
       "static/chunks/node_modules_next_dist_8db7fb1f._.js",
       "static/chunks/frontend_app_favicon_ico_mjs_e52104ae._.js",

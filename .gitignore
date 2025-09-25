@@ -48,3 +48,10 @@ next-env.d.ts
 backend/venv/
 backend/__pycache__/
 backend/.idea/
+backend/.env
+
+
+pipeline_code/__pycache__/
+pipeline_code/models/
+pipeline_code/pdfs/
+pipeline_code/.env

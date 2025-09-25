@@ -604,7 +604,7 @@ function DocumentsPage() {
                                 date: new Date().toISOString().slice(0, 10),
                                 status: 'unread',
                                 summary: 'A newly uploaded document.',
-                                summary_ml: 'പുതുതായി അപ്‌ലോഡ് ചെയ്ത ഒരു രേഖ.',
+                                summary_ml: '',
                                 department: isAdmin ? data.department : deptSlug.charAt(0).toUpperCase() + deptSlug.slice(1)
                             };
                             try {

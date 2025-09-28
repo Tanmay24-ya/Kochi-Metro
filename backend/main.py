@@ -1,5 +1,6 @@
 # backend/main.py
-
+from typing import List
+import uuid
 # --- Standard Imports ---
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.orm import Session
@@ -25,10 +26,17 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# --- ROBUST CORS MIDDLEWARE ---
+# This list now includes the new port your frontend is using
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3003", # <-- ADD THIS LINE
+    "http://127.0.0.1:3003", # <-- And this one for good measure
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins, # Use the updated list
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -38,6 +46,35 @@ app.add_middleware(
 UPLOAD_DIRECTORY = "uploads"
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
+def generate_simple_answer(question: str, document: models.Document) -> str:
+    """
+    A simple, rule-based engine to answer questions based on pre-processed data.
+    """
+    question_lower = question.lower()
+
+    # Rule 1: Check for keywords related to deadlines
+    if any(keyword in question_lower for keyword in ["deadline", "date", "when"]):
+        if document.deadlines and len(document.deadlines) > 0:
+            # Format the list of deadlines into a nice string
+            deadlines_str = "\n".join([f"- {d}" for d in document.deadlines])
+            return f"Based on the document, the following deadlines or key dates were identified:\n{deadlines_str}"
+        else:
+            return "No specific deadlines or key dates were extracted from this document."
+
+    # Rule 2: Check for keywords related to financials
+    if any(keyword in question_lower for keyword in ["financial", "money", "cost", "payment"]):
+        if document.financial_terms and len(document.financial_terms) > 0:
+            financial_str = "\n".join([f"- {f}" for f in document.financial_terms])
+            return f"The following financial terms or figures were mentioned in the document:\n{financial_str}"
+        else:
+            return "No specific financial terms or figures were extracted from this document."
+
+    # Rule 3: Default to providing the summary
+    # This will catch "what is this about?", "summarize", etc.
+    if document.summary:
+        return f"Here is the summary of the document:\n\n{document.summary}"
+
+    return "I could not find a specific answer, but this document has not yet been summarized."
 
 # --- Diagnostic Endpoints ---
 @app.get("/")
@@ -141,3 +178,54 @@ def read_all_documents(skip: int = 0, limit: int = 100, db: Session = Depends(ge
 def read_documents_for_department(department: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     documents = crud.get_documents_by_department(db, department=department, skip=skip, limit=limit)
     return documents
+
+# --- ADD THESE NEW ENDPOINTS FOR Q&A ---
+
+@app.post("/documents/{document_id}/questions", response_model=schemas.Question)
+def ask_question_on_document(
+        document_id: uuid.UUID,
+        question: schemas.QuestionCreate,
+        db: Session = Depends(get_db)
+):
+    # First, fetch the document to get its summary and other details
+    document = crud.get_document_by_id(db, document_id=document_id)
+    if not document:
+        raise HTTPException(status_code=404, detail="Document not found")
+
+    # Use the original uploader's ID as the person asking the question
+    user_id_who_asked = document.uploader_id
+
+    # Create the question in the database with a NULL answer first
+    db_question = crud.create_question(
+        db=db,
+        document_id=document_id,
+        user_id=user_id_who_asked,
+        question=question
+    )
+    print(f"New question received and saved with ID: {db_question.id}")
+
+    # NOW, GENERATE AND SAVE THE ANSWER
+    print("Generating simple answer...")
+    answer_text = generate_simple_answer(question.question_text, document)
+
+    # Update the question in the database with the answer we just generated
+    updated_question = crud.update_question_with_answer(
+        db=db,
+        question_id=db_question.id,
+        answer_text=answer_text
+    )
+    print("Answer generated and saved.")
+
+    return updated_question
+
+
+@app.get("/documents/{document_id}/questions", response_model=List[schemas.Question])
+def get_document_questions(
+        document_id: uuid.UUID,
+        db: Session = Depends(get_db) # Ensure there are no typos like 'get_d b'
+):
+    """
+    Endpoint for the frontend to retrieve the full conversation history
+    (all questions and their answers) for a document.
+    """
+    return crud.get_questions_for_document(db=db, document_id=document_id)

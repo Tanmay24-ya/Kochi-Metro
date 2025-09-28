@@ -8,6 +8,7 @@ import os
 import pymupdf
 from PIL import Image, ImageOps, ImageFilter
 import pytesseract
+pytesseract.pytesseract.tesseract_cmd = r'D:\Softwares\tesseract\tesseract.exe'
 import spacy
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -18,10 +19,13 @@ import gen_ai1
 # ==================== CONFIGURATION ====================
 MAX_CHUNK_TOKENS = 256
 CHUNK_TOKEN_OVERLAP = 40
-CLASSIFICATION_MODEL_NAME = "models/Fine_Tunned_Classi"  # Updated model path
+CURRENT_DIR = Path(__file__).resolve().parent
+CLASSIFICATION_MODEL_PATH = CURRENT_DIR / "models" / "Fine_Tunned_Classi"
 
-BASE_DIR = Path(r"D:\clony\Doc_Load_Automation").resolve()
-LOCAL_CLF_DIR = BASE_DIR / "models" / "classifier"
+# CLASSIFICATION_MODEL_NAME = "models/Fine_Tunned_Classi"  # Updated model path
+#
+# BASE_DIR = Path(r"D:\clony\Doc_Load_Automation").resolve()
+# LOCAL_CLF_DIR = BASE_DIR / "models" / "classifier"
 
 classification_dept_map = {
     0: "Finance",
@@ -87,17 +91,32 @@ def chunk_text_tokenwise(text, tokenizer, max_tokens=MAX_CHUNK_TOKENS, overlap=C
 
 
 def load_classification_model():
-    if LOCAL_CLF_DIR.exists():
-        print(f"[INFO] Loading classification model from local cache: {LOCAL_CLF_DIR}")
-        tokenizer = AutoTokenizer.from_pretrained(LOCAL_CLF_DIR)
-        model = AutoModelForSequenceClassification.from_pretrained(LOCAL_CLF_DIR).to(device)
+    """
+    Loads the classification model using a hybrid approach:
+    - The TOKENIZER is loaded from the original base model on the Hub.
+    - The fine-tuned MODEL WEIGHTS are loaded from the local directory.
+    """
+    # Based on your config.json, the original base model is almost certainly this:
+    ORIGINAL_BASE_MODEL_NAME = "bert-base-uncased"
+
+    print(f"[INFO] Loading tokenizer for '{ORIGINAL_BASE_MODEL_NAME}' from Hugging Face Hub...")
+    try:
+        # Load the tokenizer from the public, original BERT model
+        tokenizer = AutoTokenizer.from_pretrained(ORIGINAL_BASE_MODEL_NAME)
+    except Exception as e:
+        print(f"ERROR: Could not download the tokenizer '{ORIGINAL_BASE_MODEL_NAME}'. Check your internet connection.")
+        raise e
+
+    print(f"[INFO] Loading fine-tuned model weights from local path: {CLASSIFICATION_MODEL_PATH}")
+    if CLASSIFICATION_MODEL_PATH.exists():
+        # Load your fine-tuned model from the local path
+        model = AutoModelForSequenceClassification.from_pretrained(CLASSIFICATION_MODEL_PATH).to(device)
     else:
-        print(f"[INFO] Downloading classification model from: {CLASSIFICATION_MODEL_NAME}")
-        tokenizer = AutoTokenizer.from_pretrained(CLASSIFICATION_MODEL_NAME)
-        model = AutoModelForSequenceClassification.from_pretrained(CLASSIFICATION_MODEL_NAME).to(device)
-        LOCAL_CLF_DIR.mkdir(parents=True, exist_ok=True)
-        tokenizer.save_pretrained(LOCAL_CLF_DIR)
-        model.save_pretrained(LOCAL_CLF_DIR)
+        raise FileNotFoundError(
+            f"Classification model not found at path: {CLASSIFICATION_MODEL_PATH}. "
+            f"Please ensure the 'Fine_Tunned_Classi' folder is inside 'backend/models/'."
+        )
+
     return tokenizer, model
 
 
@@ -155,7 +174,7 @@ def pipeline_process_pdf(pdf_path, clf_tokenizer=tokenizer, clf_model=model, nlp
     }
 
 
-# if __name__ == "__main__":
+# if _name_ == "_main_":
 #     parser = argparse.ArgumentParser(description="Unified PDF Processing Pipeline")
 #     parser.add_argument("pdf_file", help="Path to input PDF file")
 #     args = parser.parse_args()

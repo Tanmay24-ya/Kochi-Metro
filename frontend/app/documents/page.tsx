@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
     FileText, Settings, LogOut, Search, ChevronDown, Loader2, Upload, X, ArrowUp, ArrowDown, FileImage,
@@ -24,7 +24,21 @@ type Document = {
     financial_terms?: string[];
 };
 
+// We need a type for the conversation history
+type QnaPair = {
+    id: string;
+    question_text: string;
+    answer_text: string | null;
+    asked_at: string;
+}
+
 // --- Reusable Components ---
+
+// This defines the "shape" of the context and creates a hook to use it.
+const DocumentsPageContext = createContext<{ setShowQnaModalForDoc: (doc: Document | null) => void }>({
+    setShowQnaModalForDoc: () => {}, // Default empty function
+});
+const useDocumentsPageContext = () => useContext(DocumentsPageContext);
 
 const NavLink = ({ href, icon, children, isActive }: { href: string; icon: React.ReactNode; children: React.ReactNode; isActive: boolean; }) => (
     <Link href={href} className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200 ${isActive ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}>
@@ -34,7 +48,7 @@ const NavLink = ({ href, icon, children, isActive }: { href: string; icon: React
 );
 
 // --- (4) ENHANCE THE MODAL to display the new ML data ---
-const DocumentViewerModal = ({ doc, onClose }: { doc: Document; onClose: () => void; }) => {
+const DocumentViewerModal = ({ doc, onClose, onOpenQna }: { doc: Document; onClose: () => void; onOpenQna: () => void; }) => {
     const [activeTab, setActiveTab] = useState<'summary' | 'original'>('summary');
 
     return (
@@ -60,6 +74,14 @@ const DocumentViewerModal = ({ doc, onClose }: { doc: Document; onClose: () => v
                                 Original Document
                             </button>
                         </div>
+
+                        <button
+                            onClick={onOpenQna}
+                            className="bg-green-600 text-white px-4 py-1 text-sm rounded-md hover:bg-green-700 font-semibold"
+                        >
+                            Q&A on this Doc
+                        </button>
+
                         <button onClick={onClose} className="text-gray-400 hover:text-white bg-gray-800 p-2 rounded-full"><X size={20} /></button>
                     </div>
                 </header>
@@ -106,6 +128,122 @@ const DocumentViewerModal = ({ doc, onClose }: { doc: Document; onClose: () => v
     )
 };
 
+// --- ADD THIS NEW Q&A MODAL COMPONENT ---
+const QnaModal = ({ doc, onClose }: { doc: Document; onClose: () => void; }) => {
+    const [conversation, setConversation] = useState<QnaPair[]>([]);
+    const [newQuestion, setNewQuestion] = useState('');
+    const [isLoading, setIsLoading] = useState(true); // Start loading true to fetch history
+
+    const suggestedQuestions = [
+        `What is the main summary of this document?`,
+        `Are there any important deadlines mentioned?`,
+        `What are the key financial terms in this document?`,
+    ];
+
+    // Function to fetch the conversation history
+    const fetchConversation = async () => {
+        try {
+            const response = await fetch(`${API_BASE}/documents/${doc.id}/questions`);
+            if (!response.ok) throw new Error("Failed to fetch history.");
+            const data = await response.json();
+            setConversation(data);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Fetch the history when the modal first opens
+    useEffect(() => {
+        fetchConversation();
+    }, []);
+
+    const handleAskQuestion = async (questionText: string) => {
+        if (!questionText.trim()) return;
+
+        const newQnaEntry: QnaPair = {
+            id: `temp-${Date.now()}`, // A temporary ID for the React key
+            question_text: questionText,
+            answer_text: null, // It starts with "Awaiting answer..."
+            asked_at: new Date().toISOString(),
+        };
+        setConversation(prev => [...prev, newQnaEntry]);
+        setNewQuestion(''); // Clear the input box immediately
+        setIsLoading(true);
+
+        try {
+            const response = await fetch(`${API_BASE}/documents/${doc.id}/questions`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question_text: questionText }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to submit question.');
+            }
+
+            // After successfully asking, refresh the conversation history
+            await fetchConversation();
+
+        } catch (err: any) {
+            alert(`Error: ${err.message}`);
+            // Optionally, remove the optimistic update on error
+            setConversation(prev => prev.filter(q => q.id !== newQnaEntry.id));
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 animate-fade-in">
+            <div className="bg-gray-800 w-full max-w-2xl h-5/6 rounded-lg shadow-2xl flex flex-col p-6">
+                <header className="flex justify-between items-center mb-4 flex-shrink-0">
+                    <h3 className="text-xl font-bold text-white">Q&A on "{doc.title}"</h3>
+                    <button onClick={onClose} className="text-gray-400 hover:text-white"><X size={24} /></button>
+                </header>
+
+                <main className="flex-1 overflow-y-auto pr-2 space-y-4">
+                    {isLoading && <div className="text-center text-gray-400">Loading history...</div>}
+                    {conversation.map(qna => (
+                        <div key={qna.id}>
+                            <p className="font-semibold text-blue-300">You asked:</p>
+                            <p className="bg-gray-700 p-2 rounded-md mb-2">{qna.question_text}</p>
+                            <p className="font-semibold text-green-300">Answer:</p>
+                            <p className="bg-gray-900 p-2 rounded-md">
+                                {qna.answer_text ? qna.answer_text : <span className="text-gray-400 italic">Awaiting answer from AI...</span>}
+                            </p>
+                        </div>
+                    ))}
+                </main>
+
+                <footer className="mt-4 flex-shrink-0">
+                    <div className="flex gap-2 mb-3">
+                        {suggestedQuestions.map((q, i) => (
+                            <button key={i} onClick={() => handleAskQuestion(q)} className="text-sm bg-gray-700 hover:bg-gray-600 text-gray-300 px-3 py-1 rounded-full text-left">
+                                {q}
+                            </button>
+                        ))}
+                    </div>
+                    <form onSubmit={(e) => { e.preventDefault(); handleAskQuestion(newQuestion); }} className="flex gap-2">
+                        <input
+                            type="text"
+                            value={newQuestion}
+                            onChange={(e) => setNewQuestion(e.target.value)}
+                            placeholder="Type your question here..."
+                            className="flex-grow bg-gray-700 text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <button type="submit" disabled={isLoading} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md disabled:bg-gray-500">
+                            Ask
+                        </button>
+                    </form>
+                </footer>
+            </div>
+        </div>
+    );
+};
+
+
 // --- Main Documents Page Component ---
 export default function DocumentsPage() {
     const searchParams = useSearchParams();
@@ -120,6 +258,9 @@ export default function DocumentsPage() {
 
     const [deptSlug, setDeptSlug] = useState<string>('operations');
     const [isAdmin, setIsAdmin] = useState(false);
+
+    // const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
+    const [showQnaModalForDoc, setShowQnaModalForDoc] = useState<Document | null>(null);
 
     useEffect(() => {
         const init = async () => {
@@ -136,7 +277,8 @@ export default function DocumentsPage() {
             try {
                 let fetchUrl = '';
                 if (admin) {
-                    fetchUrl = `${API_BASE}/documents/?skip=0&limit=100`;
+                    // fetchUrl = `${API_BASE}/documents/?skip=0&limit=100`;
+                    fetchUrl = `${API_BASE}/documents/`;
                 } else {
                     const deptToFetch = storedUser?.department || 'Operations';
                     fetchUrl = `${API_BASE}/documents/${encodeURIComponent(deptToFetch)}`;
@@ -202,7 +344,12 @@ export default function DocumentsPage() {
     }
 
     return (
+        <DocumentsPageContext.Provider value={{ setShowQnaModalForDoc }}>
+
         <div className="flex min-h-screen bg-gray-900 text-gray-300">
+            {selectedDoc && <DocumentViewerModal doc={selectedDoc} onClose={() => setSelectedDoc(null)} />}
+            {showQnaModalForDoc && <QnaModal doc={showQnaModalForDoc} onClose={() => setShowQnaModalForDoc(null)} />}
+
             <aside className="w-64 bg-gray-950 p-6 flex-shrink-0 flex flex-col">
                 <div>
                     <h1 className="text-2xl font-bold text-white mb-8">Docu Sphere</h1>
@@ -220,7 +367,10 @@ export default function DocumentsPage() {
             </aside>
 
             <main className="flex-1 p-8 overflow-y-auto">
-                {selectedDoc && <DocumentViewerModal doc={selectedDoc} onClose={() => setSelectedDoc(null)} />}
+                {/*<>{selectedDoc && <DocumentViewerModal doc={selectedDoc} onClose={() => setSelectedDoc(null)} />}*/}
+
+                {/*/!* --- ADD THE NEW QNA MODAL RIGHT HERE --- *!/*/}
+                {/*{sho</>wQnaModalForDoc && <QnaModal doc={showQnaModalForDoc} onClose={() => setShowQnaModalForDoc(null)} />}*/}
 
                 {showUploadModal && (
                     <UploadModal
@@ -297,25 +447,44 @@ export default function DocumentsPage() {
                 </section>
             </main>
         </div>
+        </DocumentsPageContext.Provider>
+
     );
 }
 
 
-// Simplified DocumentCard, as hover preview is removed for simplicity
 const DocumentCard = ({ doc, onClick }: { doc: Document; onClick: () => void; }) => {
+    // This hook correctly gets the function to open the Q&A modal from the parent page
+    const { setShowQnaModalForDoc } = useDocumentsPageContext();
+
     return (
-        <div
-            onClick={onClick}
-            className="bg-gray-800 p-4 rounded-lg shadow-lg flex flex-col justify-between h-48 cursor-pointer group hover:bg-gray-700 transition-colors"
-        >
-            <div>
+        // This is the main container for styling
+        <div className="bg-gray-800 p-4 rounded-lg shadow-lg flex flex-col justify-between h-48 group hover:bg-gray-700 transition-colors">
+
+            {/* Part 1: Main Clickable Area for Document Viewer */}
+            {/* This div takes up most of the space and handles the original 'onClick' to view the PDF */}
+            <div onClick={onClick} className="flex-grow cursor-pointer">
                 <FileText className="text-blue-400" size={32} />
                 <h4 className="font-bold text-white mt-3 truncate group-hover:text-blue-300">{doc.title}</h4>
                 <p className="text-sm text-gray-400">{doc.department}</p>
             </div>
-            <div>
+
+            {/* Part 2: Footer with Status and the new Q&A Button */}
+            <div className="flex-shrink-0 pt-2">
                 <p className="text-xs text-gray-500">Status: {doc.status}</p>
-                <p className="text-xs text-gray-500">{doc.upload_date}</p>
+
+                {/* This is the new button for the Q&A feature */}
+                <button
+                    onClick={(e) => {
+                        // This stops the click from also triggering the main card's onClick
+                        e.stopPropagation();
+                        // This calls the function from our context to open the Q&A modal
+                        setShowQnaModalForDoc(doc);
+                    }}
+                    className="mt-2 w-full text-center bg-green-600 text-white text-xs py-1 rounded hover:bg-green-700 transition-colors font-semibold"
+                >
+                    Q&A
+                </button>
             </div>
         </div>
     );

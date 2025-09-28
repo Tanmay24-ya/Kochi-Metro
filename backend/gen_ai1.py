@@ -26,6 +26,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from preprocess import clean_text_english, chunk_text  # your functions
 from langchain.schema import Document
 from pinecone import ServerlessSpec
+from sentence_transformers import SentenceTransformer
 load_dotenv()
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 os.environ["GOOGLE_API_KEY"] = os.getenv("GEMINI_API_KEY")
@@ -44,7 +45,7 @@ if not pc.has_index(index_name):
 index = pc.Index(index_name)
 
 encoder = HuggingFaceEmbeddings(
-    model_name=r"C:\Users\jains\.cache\huggingface\hub\models--sentence-transformers--all-MiniLM-L6-v2\snapshots\c9745ed1d9f207416be6d2e6f8de32d1f16199bf",
+    model_name=r"sentence-transformers/all-MiniLM-L6-v2",
     model_kwargs={"device": "cpu"}
 )
 

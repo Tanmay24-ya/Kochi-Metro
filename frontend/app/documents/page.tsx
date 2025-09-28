@@ -347,7 +347,18 @@ export default function DocumentsPage() {
         <DocumentsPageContext.Provider value={{ setShowQnaModalForDoc }}>
 
         <div className="flex min-h-screen bg-gray-900 text-gray-300">
-            {selectedDoc && <DocumentViewerModal doc={selectedDoc} onClose={() => setSelectedDoc(null)} />}
+            {/*{selectedDoc && <DocumentViewerModal doc={selectedDoc} onClose={() => setSelectedDoc(null)} />}*/}
+            {selectedDoc && (
+                <DocumentViewerModal
+                    doc={selectedDoc}
+                    onClose={() => setSelectedDoc(null)}
+                    // This new prop defines what happens when the Q&A button is clicked
+                    onOpenQna={() => {
+                        setShowQnaModalForDoc(selectedDoc); // Open the QnA modal with the current doc
+                        setSelectedDoc(null);             // Close this viewer modal
+                    }}
+                />
+            )}
             {showQnaModalForDoc && <QnaModal doc={showQnaModalForDoc} onClose={() => setShowQnaModalForDoc(null)} />}
 
             <aside className="w-64 bg-gray-950 p-6 flex-shrink-0 flex flex-col">

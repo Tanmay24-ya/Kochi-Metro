@@ -723,18 +723,23 @@ function DocumentsPage() {
             children: [
                 selectedDoc && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DocumentViewerModal, {
                     doc: selectedDoc,
-                    onClose: ()=>setSelectedDoc(null)
+                    onClose: ()=>setSelectedDoc(null),
+                    // This new prop defines what happens when the Q&A button is clicked
+                    onOpenQna: ()=>{
+                        setShowQnaModalForDoc(selectedDoc); // Open the QnA modal with the current doc
+                        setSelectedDoc(null); // Close this viewer modal
+                    }
                 }, void 0, false, {
                     fileName: "[project]/frontend/app/documents/page.tsx",
-                    lineNumber: 350,
-                    columnNumber: 29
+                    lineNumber: 352,
+                    columnNumber: 17
                 }, this),
                 showQnaModalForDoc && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(QnaModal, {
                     doc: showQnaModalForDoc,
                     onClose: ()=>setShowQnaModalForDoc(null)
                 }, void 0, false, {
                     fileName: "[project]/frontend/app/documents/page.tsx",
-                    lineNumber: 351,
+                    lineNumber: 362,
                     columnNumber: 36
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("aside", {
@@ -747,7 +752,7 @@ function DocumentsPage() {
                                     children: "Docu Sphere"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 355,
+                                    lineNumber: 366,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
@@ -759,14 +764,14 @@ function DocumentsPage() {
                                                 size: 20
                                             }, void 0, false, {
                                                 fileName: "[project]/frontend/app/documents/page.tsx",
-                                                lineNumber: 357,
+                                                lineNumber: 368,
                                                 columnNumber: 58
                                             }, void 0),
                                             isActive: false,
                                             children: "Dashboard"
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 357,
+                                            lineNumber: 368,
                                             columnNumber: 25
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(NavLink, {
@@ -775,14 +780,14 @@ function DocumentsPage() {
                                                 size: 20
                                             }, void 0, false, {
                                                 fileName: "[project]/frontend/app/documents/page.tsx",
-                                                lineNumber: 358,
+                                                lineNumber: 369,
                                                 columnNumber: 58
                                             }, void 0),
                                             isActive: true,
                                             children: "Documents"
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 358,
+                                            lineNumber: 369,
                                             columnNumber: 25
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(NavLink, {
@@ -791,14 +796,14 @@ function DocumentsPage() {
                                                 size: 20
                                             }, void 0, false, {
                                                 fileName: "[project]/frontend/app/documents/page.tsx",
-                                                lineNumber: 359,
+                                                lineNumber: 370,
                                                 columnNumber: 49
                                             }, void 0),
                                             isActive: false,
                                             children: "Reports"
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 359,
+                                            lineNumber: 370,
                                             columnNumber: 25
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(NavLink, {
@@ -807,26 +812,26 @@ function DocumentsPage() {
                                                 size: 20
                                             }, void 0, false, {
                                                 fileName: "[project]/frontend/app/documents/page.tsx",
-                                                lineNumber: 360,
+                                                lineNumber: 371,
                                                 columnNumber: 49
                                             }, void 0),
                                             isActive: false,
                                             children: "Approvals"
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 360,
+                                            lineNumber: 371,
                                             columnNumber: 25
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 356,
+                                    lineNumber: 367,
                                     columnNumber: 21
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/documents/page.tsx",
-                            lineNumber: 354,
+                            lineNumber: 365,
                             columnNumber: 17
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -838,14 +843,14 @@ function DocumentsPage() {
                                         size: 20
                                     }, void 0, false, {
                                         fileName: "[project]/frontend/app/documents/page.tsx",
-                                        lineNumber: 364,
+                                        lineNumber: 375,
                                         columnNumber: 45
                                     }, void 0),
                                     isActive: false,
                                     children: "Settings"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 364,
+                                    lineNumber: 375,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(NavLink, {
@@ -854,26 +859,26 @@ function DocumentsPage() {
                                         size: 20
                                     }, void 0, false, {
                                         fileName: "[project]/frontend/app/documents/page.tsx",
-                                        lineNumber: 365,
+                                        lineNumber: 376,
                                         columnNumber: 45
                                     }, void 0),
                                     isActive: false,
                                     children: "Logout"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 365,
+                                    lineNumber: 376,
                                     columnNumber: 21
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/documents/page.tsx",
-                            lineNumber: 363,
+                            lineNumber: 374,
                             columnNumber: 17
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/frontend/app/documents/page.tsx",
-                    lineNumber: 353,
+                    lineNumber: 364,
                     columnNumber: 13
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -905,7 +910,7 @@ function DocumentsPage() {
                             }
                         }, void 0, false, {
                             fileName: "[project]/frontend/app/documents/page.tsx",
-                            lineNumber: 376,
+                            lineNumber: 387,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("header", {
@@ -918,7 +923,7 @@ function DocumentsPage() {
                                             children: isAdmin ? 'All Documents' : `${deptSlug.charAt(0).toUpperCase() + deptSlug.slice(1)} Documents`
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 402,
+                                            lineNumber: 413,
                                             columnNumber: 25
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -926,13 +931,13 @@ function DocumentsPage() {
                                             children: "Browse, search, and manage files."
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 403,
+                                            lineNumber: 414,
                                             columnNumber: 25
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 401,
+                                    lineNumber: 412,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -943,20 +948,20 @@ function DocumentsPage() {
                                             size: 20
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 406,
+                                            lineNumber: 417,
                                             columnNumber: 25
                                         }, this),
                                         " Upload Document"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 405,
+                                    lineNumber: 416,
                                     columnNumber: 21
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/documents/page.tsx",
-                            lineNumber: 400,
+                            lineNumber: 411,
                             columnNumber: 17
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -970,7 +975,7 @@ function DocumentsPage() {
                                             size: 20
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 412,
+                                            lineNumber: 423,
                                             columnNumber: 25
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -981,13 +986,13 @@ function DocumentsPage() {
                                             className: "bg-gray-800 border-gray-700 w-full text-white rounded-md pl-10 pr-4 py-2 focus:outline-none focus:border-blue-500"
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 413,
+                                            lineNumber: 424,
                                             columnNumber: 25
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 411,
+                                    lineNumber: 422,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -998,7 +1003,7 @@ function DocumentsPage() {
                                             children: "Sort by:"
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 422,
+                                            lineNumber: 433,
                                             columnNumber: 25
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1010,19 +1015,19 @@ function DocumentsPage() {
                                                     size: 16
                                                 }, void 0, false, {
                                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                                    lineNumber: 424,
+                                                    lineNumber: 435,
                                                     columnNumber: 105
                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$down$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowDown$3e$__["ArrowDown"], {
                                                     size: 16
                                                 }, void 0, false, {
                                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                                    lineNumber: 424,
+                                                    lineNumber: 435,
                                                     columnNumber: 129
                                                 }, this))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 423,
+                                            lineNumber: 434,
                                             columnNumber: 25
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1034,31 +1039,31 @@ function DocumentsPage() {
                                                     size: 16
                                                 }, void 0, false, {
                                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                                    lineNumber: 427,
+                                                    lineNumber: 438,
                                                     columnNumber: 100
                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$down$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowDown$3e$__["ArrowDown"], {
                                                     size: 16
                                                 }, void 0, false, {
                                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                                    lineNumber: 427,
+                                                    lineNumber: 438,
                                                     columnNumber: 124
                                                 }, this))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 426,
+                                            lineNumber: 437,
                                             columnNumber: 25
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 421,
+                                    lineNumber: 432,
                                     columnNumber: 21
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/documents/page.tsx",
-                            lineNumber: 410,
+                            lineNumber: 421,
                             columnNumber: 17
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -1070,12 +1075,12 @@ function DocumentsPage() {
                                             onClick: ()=>setSelectedDoc(doc)
                                         }, doc.id, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 435,
+                                            lineNumber: 446,
                                             columnNumber: 29
                                         }, this))
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 433,
+                                    lineNumber: 444,
                                     columnNumber: 21
                                 }, this),
                                 sortedAndFilteredDocuments.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1085,24 +1090,24 @@ function DocumentsPage() {
                                         children: "No documents found."
                                     }, void 0, false, {
                                         fileName: "[project]/frontend/app/documents/page.tsx",
-                                        lineNumber: 444,
+                                        lineNumber: 455,
                                         columnNumber: 29
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 443,
+                                    lineNumber: 454,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/documents/page.tsx",
-                            lineNumber: 432,
+                            lineNumber: 443,
                             columnNumber: 17
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/frontend/app/documents/page.tsx",
-                    lineNumber: 369,
+                    lineNumber: 380,
                     columnNumber: 13
                 }, this)
             ]
@@ -1133,7 +1138,7 @@ const DocumentCard = ({ doc, onClick })=>{
                         size: 32
                     }, void 0, false, {
                         fileName: "[project]/frontend/app/documents/page.tsx",
-                        lineNumber: 467,
+                        lineNumber: 478,
                         columnNumber: 17
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
@@ -1141,7 +1146,7 @@ const DocumentCard = ({ doc, onClick })=>{
                         children: doc.title
                     }, void 0, false, {
                         fileName: "[project]/frontend/app/documents/page.tsx",
-                        lineNumber: 468,
+                        lineNumber: 479,
                         columnNumber: 17
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1149,13 +1154,13 @@ const DocumentCard = ({ doc, onClick })=>{
                         children: doc.department
                     }, void 0, false, {
                         fileName: "[project]/frontend/app/documents/page.tsx",
-                        lineNumber: 469,
+                        lineNumber: 480,
                         columnNumber: 17
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/frontend/app/documents/page.tsx",
-                lineNumber: 466,
+                lineNumber: 477,
                 columnNumber: 13
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1169,7 +1174,7 @@ const DocumentCard = ({ doc, onClick })=>{
                         ]
                     }, void 0, true, {
                         fileName: "[project]/frontend/app/documents/page.tsx",
-                        lineNumber: 474,
+                        lineNumber: 485,
                         columnNumber: 17
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1183,19 +1188,19 @@ const DocumentCard = ({ doc, onClick })=>{
                         children: "Q&A"
                     }, void 0, false, {
                         fileName: "[project]/frontend/app/documents/page.tsx",
-                        lineNumber: 477,
+                        lineNumber: 488,
                         columnNumber: 17
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/frontend/app/documents/page.tsx",
-                lineNumber: 473,
+                lineNumber: 484,
                 columnNumber: 13
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/frontend/app/documents/page.tsx",
-        lineNumber: 462,
+        lineNumber: 473,
         columnNumber: 9
     }, ("TURBOPACK compile-time value", void 0)));
 };
@@ -1237,12 +1242,12 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept })=>{
                         size: 24
                     }, void 0, false, {
                         fileName: "[project]/frontend/app/documents/page.tsx",
-                        lineNumber: 551,
+                        lineNumber: 562,
                         columnNumber: 109
                     }, ("TURBOPACK compile-time value", void 0))
                 }, void 0, false, {
                     fileName: "[project]/frontend/app/documents/page.tsx",
-                    lineNumber: 551,
+                    lineNumber: 562,
                     columnNumber: 17
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1250,7 +1255,7 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept })=>{
                     children: "Upload New Document"
                 }, void 0, false, {
                     fileName: "[project]/frontend/app/documents/page.tsx",
-                    lineNumber: 552,
+                    lineNumber: 563,
                     columnNumber: 17
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -1264,7 +1269,7 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept })=>{
                                     children: "Document Title"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 556,
+                                    lineNumber: 567,
                                     columnNumber: 25
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1275,13 +1280,13 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept })=>{
                                     className: "w-full bg-gray-700 text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 557,
+                                    lineNumber: 568,
                                     columnNumber: 25
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/documents/page.tsx",
-                            lineNumber: 555,
+                            lineNumber: 566,
                             columnNumber: 21
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1291,7 +1296,7 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept })=>{
                                     children: "Department"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 560,
+                                    lineNumber: 571,
                                     columnNumber: 25
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 canChooseDept ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -1304,7 +1309,7 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept })=>{
                                             children: "Finance"
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 563,
+                                            lineNumber: 574,
                                             columnNumber: 33
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1312,7 +1317,7 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept })=>{
                                             children: "Operations"
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 564,
+                                            lineNumber: 575,
                                             columnNumber: 33
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1320,7 +1325,7 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept })=>{
                                             children: "Engineering"
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 565,
+                                            lineNumber: 576,
                                             columnNumber: 33
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1328,7 +1333,7 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept })=>{
                                             children: "Maintenance"
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 566,
+                                            lineNumber: 577,
                                             columnNumber: 33
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1336,13 +1341,13 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept })=>{
                                             children: "HR"
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 567,
+                                            lineNumber: 578,
                                             columnNumber: 33
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 562,
+                                    lineNumber: 573,
                                     columnNumber: 29
                                 }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                     readOnly: true,
@@ -1350,13 +1355,13 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept })=>{
                                     className: "w-full bg-gray-700 text-white rounded-md p-3"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 570,
+                                    lineNumber: 581,
                                     columnNumber: 29
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/documents/page.tsx",
-                            lineNumber: 559,
+                            lineNumber: 570,
                             columnNumber: 21
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1366,7 +1371,7 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept })=>{
                                     children: "Document File"
                                 }, void 0, false, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 574,
+                                    lineNumber: 585,
                                     columnNumber: 25
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1377,7 +1382,7 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept })=>{
                                             className: "mx-auto text-gray-500 mb-2"
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 576,
+                                            lineNumber: 587,
                                             columnNumber: 29
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1385,7 +1390,7 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept })=>{
                                             children: file ? file.name : 'Drag & drop files here or click to browse'
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 577,
+                                            lineNumber: 588,
                                             columnNumber: 29
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1394,19 +1399,19 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept })=>{
                                             className: "opacity-0 absolute inset-0 w-full h-full cursor-pointer"
                                         }, void 0, false, {
                                             fileName: "[project]/frontend/app/documents/page.tsx",
-                                            lineNumber: 578,
+                                            lineNumber: 589,
                                             columnNumber: 29
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/frontend/app/documents/page.tsx",
-                                    lineNumber: 575,
+                                    lineNumber: 586,
                                     columnNumber: 25
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/frontend/app/documents/page.tsx",
-                            lineNumber: 573,
+                            lineNumber: 584,
                             columnNumber: 21
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1421,36 +1426,36 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept })=>{
                                         size: 20
                                     }, void 0, false, {
                                         fileName: "[project]/frontend/app/documents/page.tsx",
-                                        lineNumber: 583,
+                                        lineNumber: 594,
                                         columnNumber: 45
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     isUploading ? 'Uploading...' : 'Upload Document'
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/frontend/app/documents/page.tsx",
-                                lineNumber: 582,
+                                lineNumber: 593,
                                 columnNumber: 25
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/frontend/app/documents/page.tsx",
-                            lineNumber: 581,
+                            lineNumber: 592,
                             columnNumber: 21
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/frontend/app/documents/page.tsx",
-                    lineNumber: 553,
+                    lineNumber: 564,
                     columnNumber: 17
                 }, ("TURBOPACK compile-time value", void 0))
             ]
         }, void 0, true, {
             fileName: "[project]/frontend/app/documents/page.tsx",
-            lineNumber: 550,
+            lineNumber: 561,
             columnNumber: 13
         }, ("TURBOPACK compile-time value", void 0))
     }, void 0, false, {
         fileName: "[project]/frontend/app/documents/page.tsx",
-        lineNumber: 549,
+        lineNumber: 560,
         columnNumber: 9
     }, ("TURBOPACK compile-time value", void 0));
 };

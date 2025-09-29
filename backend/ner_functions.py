@@ -90,35 +90,55 @@ def ner_extraction_en(text, nlp):
         "financials": money
     }
 
+
+def split_sentences_ml(text):
+    # Split using Malayalam and English sentence delimiters
+    return re.split(r'(?<=[.?!।])\s+', text)
+
 def ner_extraction_ml(text):
     results = indic_ner(text)
     deadlines, financials = [], []
 
-    # Model-based entities
+    sentences = split_sentences_ml(text)
+
+    def find_sentence(word):
+        for sent in sentences:
+            if word in sent:
+                return sent.strip()
+        return word
+
+    # --- Model-based entities ---
     for r in results:
         entity_grp = r.get("entity_group")
         word = r.get("word")
         if entity_grp in ["DATE", "TIME"]:
-            deadlines.append(word)
+            deadlines.append(find_sentence(word))
         elif entity_grp in ["MONEY", "CURRENCY"]:
-            financials.append(word)
+            financials.append(find_sentence(word))
 
-    # Regex-based dates/money
+    # --- Regex-based money ---
     regex_money_ml = re.findall(r"(?:₹|രൂപ)\s?\d{1,3}(?:,\d{3})*(?:\.\d+)?", text)
-    keywords_ml = ["ജനുവരി","ഫെബ്രുവരി","മാർച്ച്","ഏപ്രിൽ","മേയ്","ജൂൺ",
-                   "ജൂലൈ","ഓഗസ്റ്റ്","സെപ്റ്റംബർ","ഒക്ടോബർ","നവംബർ","ഡിസംബർ","ഞായറാഴ്ച","തിങ്കളാഴ്ച","ചൊവ്വാഴ്ച","ബുധനാഴ്ച",
-                   "വ്യാഴാഴ്ച","വെള്ളിയാഴ്ച","ശനിയാഴ്ച"]
-    regex_dates_ml = []
-    for key in keywords_ml:
-        regex_dates_ml.extend(re.findall(rf"{key}\s?\d{{1,2}}", text))
+    for m in regex_money_ml:
+        financials.append(find_sentence(m))
 
-    deadlines.extend(regex_dates_ml)
-    financials.extend(regex_money_ml)
+    # --- Regex-based dates (months + weekdays + day number) ---
+    keywords_ml = [
+        "ജനുവരി","ഫെബ്രുവരി","മാർച്ച്","ഏപ്രിൽ","മേയ്","ജൂൺ",
+        "ജൂലൈ","ഓഗസ്റ്റ്","സെപ്റ്റംബർ","ഒക്ടോബർ","നവംബർ","ഡിസംബർ",
+        "ഞായറാഴ്ച","തിങ്കളാഴ്ച","ചൊവ്വാഴ്ച","ബുധനാഴ്ച",
+        "വ്യാഴാഴ്ച","വെള്ളിയാഴ്ച","ശനിയാഴ്ച"
+    ]
+
+    for key in keywords_ml:
+        matches = re.findall(rf"{key}\s?\d{{1,2}}", text)
+        for m in matches:
+            deadlines.append(find_sentence(m))
 
     return {
         "deadlines": list(set(deadlines)),
         "financials": list(set(financials))
     }
+
 
 
 def ner_extraction_multilingual(text):

@@ -1,45 +1,37 @@
 from pinecone import Pinecone
 import os
 from langchain_huggingface import HuggingFaceEmbeddings
-import uuid
 from dotenv import load_dotenv
 from langchain.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.output_parsers import StrOutputParser
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain.schema import Document
-import os
-import io
-import uuid
-import pymupdf
-import chromadb
-from PIL import Image, ImageOps, ImageFilter
-import pytesseract
-from dotenv import load_dotenv
-from langchain_chroma import Chroma
-from langchain.prompts import ChatPromptTemplate
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_core.output_parsers import StrOutputParser
-from langchain_huggingface import HuggingFaceEmbeddings
-from preprocess import clean_text_english, chunk_text  # your functions
 from langchain.schema import Document
 from pinecone import ServerlessSpec
+
 load_dotenv()
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-os.environ["GOOGLE_API_KEY"] = os.getenv("GEMINI_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+# Validate API keys
+if not PINECONE_API_KEY:
+    raise ValueError("❌ PINECONE_API_KEY not found in environment variables")
+if not GEMINI_API_KEY:
+    raise ValueError("❌ GEMINI_API_KEY not found in environment variables")
+
+os.environ["GOOGLE_API_KEY"] = GEMINI_API_KEY
 
 pc = Pinecone(api_key=PINECONE_API_KEY)
 
 index_name = "doc-embeddings"
 if not pc.has_index(index_name):
-    pc.create_index(name=index_name, dimension=384,metric="cosine",
-                    spec=ServerlessSpec(
-                        cloud="aws",
-                        region="us-east-1"
-                    )
-                    )
+    pc.delete_index(index_name)
+    pc.create_index(
+        name=index_name,
+        dimension=384,
+        metric="cosine",
+        spec=ServerlessSpec(cloud="aws", region="us-east-1")
+    )
 
 index = pc.Index(index_name)
 
@@ -47,6 +39,8 @@ encoder = HuggingFaceEmbeddings(
     model_name=r"C:\Users\bahra\.cache\huggingface\hub\models--sentence-transformers--paraphrase-multilingual-MiniLM-L12-v2\snapshots\86741b4e3f5cb7765a600d3a3d55a0f6a6cb443d",
     model_kwargs={"device": "cpu"}
 )
+
+
 
 def encode(pdf_id, page_numb, docs, encoder=encoder):
     """Embed and store document chunks"""

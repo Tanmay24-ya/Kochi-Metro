@@ -1,7 +1,32 @@
-"fastapi[all]"
-sqlalchemy 
+# backend/requirements.txt
+
+# --- FastAPI Backend & Database ---
+fastapi[all]
+sqlalchemy
 psycopg2-binary
-passlib[bcrypt] 
-python-dotenv 
-python-multipart 
+passlib[bcrypt]
+python-dotenv
+python-multipart
 supabase
+
+# --- Core ML & NLP ---
+torch
+transformers
+spacy
+sentence-transformers
+langdetect
+
+# --- Document Processing & OCR ---
+PyMuPDF # Library for pymupdf
+Pillow
+pytesseract
+
+# --- LangChain & Generative AI ---
+langchain
+langchain-google-genai
+langchain-huggingface
+langchain-chroma
+
+# --- Vector Databases ---
+pinecone
+chromadb

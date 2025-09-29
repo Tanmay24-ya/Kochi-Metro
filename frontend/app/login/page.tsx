@@ -46,57 +46,56 @@ const LoginContent = () => {
             return;
         }
 
-        const departmentInfo = prefixToDept(userId);
-        const department = departmentInfo.label; // e.g., "Engineering"
-
-        const skip = parseInt('0', 10);
-        const limit = parseInt('100', 10);
-
-        console.log("Clean Department:", department);
-        console.log("Clean Skip:", skip);
-        console.log("Clean Limit:", limit);
+        // const departmentInfo = prefixToDept(userId);
+        // const department = departmentInfo.label; // e.g., "Engineering"
+        //
+        // const skip = parseInt('0', 10);
+        // const limit = parseInt('100', 10);
+        //
+        // console.log("Clean Department:", department);
+        // console.log("Clean Skip:", skip);
+        // console.log("Clean Limit:", limit);
 
         try {
-            const urlToFetch = `${API_BASE}/documents/${encodeURIComponent(department)}?skip=${skip}&limit=${limit}`;
-
-            // ADD THIS LINE
-            console.log("Attempting to fetch from URL:", urlToFetch);
-
-            // let response = await fetch(urlToFetch, { method: 'GET' });
+            const urlToFetch = `${API_BASE}/users/${encodeURIComponent(userId)}`;
+            console.log("Attempting to log in by fetching user from:", urlToFetch);
 
             const response = await fetch(urlToFetch);
 
             if (!response.ok) {
-                setError(`Failed to fetch documents for department: ${department}`);
+                if (response.status === 404) {
+                    setError('User not found. Please create the user via the API docs first.');
+                } else {
+                    const errorData = await response.json();
+                    setError(errorData.detail || 'An unknown server error occurred.');
+                }
                 return;
             }
 
-            console.log("Connection successful! Simulating login.");
+            const userData = await response.json();
+            const dept = prefixToDept(userData.id);
+            const isAdmin = dept.slug === 'admin';
 
-            const isAdmin = departmentInfo.slug === 'admin';
-
-            // Mock auth: Save user context locally
+            // Save user context to localStorage
             const user = {
-                name: name || userId,
-                userId: userId,
-                department: department,
-                deptSlug: departmentInfo.slug,
+                name: userData.name,
+                userId: userData.id,
+                department: userData.department,
+                deptSlug: dept.slug,
                 isAdmin,
             };
 
-            if (typeof window !== 'undefined') {
-                localStorage.setItem('kmrl_user', JSON.stringify(user));
-            }
+            localStorage.setItem('kmrl_user', JSON.stringify(user));
 
-            // Redirect rules
+            // Redirect based on role
             if (isAdmin) {
                 router.push('/admin');
             } else {
-                router.push(`/dashboard?dept=${departmentInfo.slug}`);
+                router.push(`/dashboard?dept=${dept.slug}`);
             }
 
         } catch (err) {
-            setError('Failed to connect to the backend. Is the server running and CORS configured?');
+            setError('Failed to connect to the backend. Is the server running?');
             console.error(err);
         }
     };

@@ -34,7 +34,7 @@ except Exception:
 
 # Embeddings
 encoder = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2",  # use HuggingFace shortcut
+    model_name=r"C:\Users\bahra\.cache\huggingface\hub\models--sentence-transformers--paraphrase-multilingual-MiniLM-L12-v2\snapshots\86741b4e3f5cb7765a600d3a3d55a0f6a6cb443d",
     model_kwargs={"device": "cpu"}
 )
 

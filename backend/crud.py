@@ -28,11 +28,18 @@ def get_all_documents(db: Session, skip: int = 0, limit: int = 100):
 def get_documents_by_department(db: Session, department: str, skip: int = 0, limit: int = 100):
     return db.query(models.Document).filter(models.Document.department == department).offset(skip).limit(limit).all()
 
-def create_document(db: Session, document: schemas.DocumentCreate, file_path: str, user_id: str):
+def create_document(db: Session, document: schemas.DocumentCreate, file_path: str, highlighted_file_path: str, user_id: str):
     db_document = models.Document(
-        id=uuid.uuid4(), title=document.title, department=document.department,
-        summary=document.summary, deadlines=document.deadlines,
-        financial_terms=document.financial_terms, file_path=file_path, uploader_id=user_id
+        id=uuid.uuid4(),
+        title=document.title,
+        department=document.department,
+        summary=document.summary,
+        deadlines=document.deadlines,
+        financial_terms=document.financial_terms,
+        file_path=file_path,
+        status="processing",
+        # highlighted_file_path=highlighted_file_path, # <-- ADDED
+        uploader_id=user_id
     )
     db.add(db_document)
     db.commit()
@@ -66,3 +73,20 @@ def update_question_with_answer(db: Session, question_id: uuid.UUID, answer_text
         db.commit()
         db.refresh(db_question)
     return db_question
+
+def update_document_with_ml_results(db: Session, document_id: uuid.UUID, ml_results: dict, highlighted_file_path: str = None):
+    """
+    Updates a document with the results from the ML pipeline.
+    """
+    db_document = db.query(models.Document).filter(models.Document.id == document_id).first()
+    if db_document:
+        db_document.department = ml_results.get("department", db_document.department)
+        db_document.summary = ml_results.get("summary")
+        db_document.deadlines = ml_results.get("deadlines", [])
+        db_document.financial_terms = ml_results.get("financials", [])
+        if highlighted_file_path:
+            db_document.highlighted_file_path = highlighted_file_path
+        db_document.status = "completed" # Mark as processed
+        db.commit()
+        db.refresh(db_document)
+    return db_document

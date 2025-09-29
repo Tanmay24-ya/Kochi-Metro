@@ -10,13 +10,13 @@ def clean_text_english(text):
     """
     # Normalize unicode
     text = unicodedata.normalize("NFKC", text)
-    
+
     # Remove non-English characters (keep basic punctuation and digits)
     text = re.sub(r"[^A-Za-z0-9\s.,;:!?()'\-\"@%$&]", " ", text)
-    
+
     # Replace multiple spaces/newlines with single space
     text = re.sub(r'\s+', ' ', text)
-    
+
     return text.strip()
 
 

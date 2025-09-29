@@ -18,7 +18,7 @@ import gen_ai1
 # ==================== CONFIGURATION ====================
 MAX_CHUNK_TOKENS = 256
 CHUNK_TOKEN_OVERLAP = 40
-CLASSIFICATION_MODEL_NAME = "models/Fine_Tunned_Classi"  # Updated model path
+CLASSIFICATION_MODEL_NAME = "models/final"  # Updated model path
 
 BASE_DIR = Path(r"D:\clony\Doc_Load_Automation").resolve()
 LOCAL_CLF_DIR = BASE_DIR / "models" / "classifier"

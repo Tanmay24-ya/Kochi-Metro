@@ -32,8 +32,9 @@ class Document(Base):
     summary = Column(Text, nullable=True)
     deadlines = Column(ARRAY(String), nullable=True)
     financial_terms = Column(ARRAY(String), nullable=True)
-
+    highlighted_file_path = Column(String, nullable=True)
     uploader = relationship("User", back_populates="documents")
+
 
 class Question(Base):
     __tablename__ = "questions"

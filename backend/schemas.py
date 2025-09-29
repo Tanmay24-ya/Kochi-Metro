@@ -37,6 +37,8 @@ class Document(DocumentBase):
     summary: Optional[str] = None
     deadlines: Optional[List[str]] = []
     financial_terms: Optional[List[str]] = []
+    highlighted_file_path: Optional[str] = None
+
     class Config:
         from_attributes = True
 

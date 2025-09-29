@@ -1,4 +1,5 @@
 'use client';
+import { useRef } from 'react';
 
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -154,10 +155,41 @@ const QnaModal = ({ doc, onClose }: { doc: Document; onClose: () => void; }) => 
         }
     };
 
+    const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+
+    const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    useEffect(() => {
+        // Check if there is a conversation and the last question has an answer
+        if (conversation.length > 0 && conversation[conversation.length - 1].answer_text) {
+            if (pollingIntervalRef.current) {
+                clearInterval(pollingIntervalRef.current); // Stop the interval
+                pollingIntervalRef.current = null;
+            }
+            setIsLoading(false); // Stop the loading indicator
+        }
+    }, [conversation]);
     // Fetch the history when the modal first opens
     useEffect(() => {
-        fetchConversation();
+        fetchConversation().finally(() => setIsLoading(false));
+
+        // Add this cleanup function to the end of the effect
+        return () => {
+            if (pollingIntervalRef.current) {
+                clearInterval(pollingIntervalRef.current);
+            }
+        };
     }, []);
+
+    useEffect(() => {
+        if (scrollContainerRef.current) {
+            const element = scrollContainerRef.current;
+            // This smoothly scrolls the container to its maximum height
+            element.scrollTo({
+                top: element.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    }, [conversation]);
 
     const handleAskQuestion = async (questionText: string) => {
         if (!questionText.trim()) return;
@@ -183,8 +215,18 @@ const QnaModal = ({ doc, onClose }: { doc: Document; onClose: () => void; }) => 
                 throw new Error('Failed to submit question.');
             }
 
-            // After successfully asking, refresh the conversation history
-            await fetchConversation();
+// Start polling for the answer every 3 seconds
+            pollingIntervalRef.current = setInterval(() => {
+                fetchConversation();
+            }, 3000);
+
+// Add a safety timeout to stop polling after 30 seconds
+            setTimeout(() => {
+                if (pollingIntervalRef.current) {
+                    clearInterval(pollingIntervalRef.current);
+                    setIsLoading(false);
+                }
+            }, 30000);
 
         } catch (err: any) {
             alert(`Error: ${err.message}`);
@@ -203,7 +245,7 @@ const QnaModal = ({ doc, onClose }: { doc: Document; onClose: () => void; }) => 
                     <button onClick={onClose} className="text-gray-400 hover:text-white"><X size={24} /></button>
                 </header>
 
-                <main className="flex-1 overflow-y-auto pr-2 space-y-4">
+                <main ref={scrollContainerRef} className="flex-1 overflow-y-auto pr-2 space-y-4">
                     {isLoading && <div className="text-center text-gray-400">Loading history...</div>}
                     {conversation.map(qna => (
                         <div key={qna.id}>
@@ -211,7 +253,16 @@ const QnaModal = ({ doc, onClose }: { doc: Document; onClose: () => void; }) => 
                             <p className="bg-gray-700 p-2 rounded-md mb-2">{qna.question_text}</p>
                             <p className="font-semibold text-green-300">Answer:</p>
                             <p className="bg-gray-900 p-2 rounded-md">
-                                {qna.answer_text ? qna.answer_text : <span className="text-gray-400 italic">Awaiting answer from AI...</span>}
+                                {qna.answer_text ? qna.answer_text : (
+                                    <span className="text-gray-400 italic flex items-center">
+        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Awaiting answer from AI...
+    </span>
+                                )}
+
                             </p>
                         </div>
                     ))}
@@ -592,7 +643,7 @@ const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept }: { onClos
                     <div className="pt-4">
                         <button type="submit" disabled={isUploading} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-md transition-colors disabled:bg-gray-500 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                             {isUploading && <Loader2 className="animate-spin" size={20} />}
-                            {isUploading ? 'Uploading...' : 'Upload Document'}
+                            {isUploading ? 'Analyzing...' : 'Upload Document'}
                         </button>
                     </div>
                 </form>

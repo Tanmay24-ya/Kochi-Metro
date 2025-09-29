@@ -1,4 +1,5 @@
 # backend/main.py
+from urllib.parse import unquote
 from typing import List
 import uuid
 # --- Standard Imports ---
@@ -181,7 +182,7 @@ def upload_document(
     # Pass the DATABASE UUID to the pipeline
     ml_results = pipeline_process_pdf(
         pdf_path=local_file_path,
-        document_id=str(db_document.id),
+        # document_id=str(db_document.id),
         clf_tokenizer=ml_models["tokenizer"],
         clf_model=ml_models["model"],
         nlp_model=ml_models["nlp_model"]
@@ -231,7 +232,7 @@ def read_documents_for_department(department: str, skip: int = 0, limit: int = 1
 
 # --- ADD THESE NEW ENDPOINTS FOR Q&A ---
 
-def run_ml_qna_in_background(question_id: uuid.UUID, document_id: uuid.UUID, question_text: str, db: Session):
+def run_ml_qna_in_background(question_id: uuid.UUID, pinecone_pdf_id: str, question_text: str, db: Session):
     """
     This function is executed in the background after the user gets their response.
     It runs the ML pipeline and updates the answer in the database.
@@ -240,7 +241,7 @@ def run_ml_qna_in_background(question_id: uuid.UUID, document_id: uuid.UUID, que
 
     # Call the ML function to get the answer
     answer_text = generate_ml_answer(
-        pdf_id=str(document_id),
+        pdf_id=pinecone_pdf_id, # <--- This now uses the correct filename ID
         query=question_text
     )
     print(f"[BACKGROUND TASK] Answer generated: {answer_text[:100]}...")
@@ -283,10 +284,12 @@ def ask_question_on_document(
     print(f"New question saved with ID: {db_question.id}. Triggering background ML task.")
 
 
+    pinecone_pdf_id = os.path.splitext(os.path.basename(unquote(document.file_path)))[0]
+
     background_tasks.add_task(
         run_ml_qna_in_background,
         db_question.id,
-        document_id,
+        pinecone_pdf_id, # <--- Pass the correct filename ID
         question.question_text,
         db
     )

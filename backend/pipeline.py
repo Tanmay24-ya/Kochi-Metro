@@ -1,4 +1,4 @@
-import re
+import regex as re
 import unicodedata
 from collections import Counter
 from pathlib import Path
@@ -8,26 +8,20 @@ import os
 import pymupdf
 from PIL import Image, ImageOps, ImageFilter
 import pytesseract
-pytesseract.pytesseract.tesseract_cmd = r'D:\Softwares\tesseract\tesseract.exe'
-from langchain_chroma import Chroma
-from pytesseract import Output
 import spacy
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-
+from pytesseract import Output
 from ner_functions import ner_extraction_multilingual, get_deadline, get_financial_details
 import gen_ai1
 
 # ==================== CONFIGURATION ====================
 MAX_CHUNK_TOKENS = 256
 CHUNK_TOKEN_OVERLAP = 40
-CURRENT_DIR = Path(__file__).resolve().parent
-CLASSIFICATION_MODEL_PATH = CURRENT_DIR / "models" / "final"
+CLASSIFICATION_MODEL_NAME = "models/final"  # Updated model path
 
-# CLASSIFICATION_MODEL_NAME = "models/final"  # Updated model path
-#
-# BASE_DIR = Path(r"D:\clony\Doc_Load_Automation").resolve()
-# LOCAL_CLF_DIR = BASE_DIR / "models" / "classifier"
+CURRENT_DIR = Path(__file__).resolve().parent
+LOCAL_CLF_DIR = CURRENT_DIR / "models" / "final"
 
 classification_dept_map = {
     0: "Engineering",
@@ -42,9 +36,9 @@ NLP_MODEL = spacy.load("en_core_web_md")
 
 
 def clean_text_multilingual(text):
-    text = unicodedata.normalize("NFKC", text)
-    #text = re.sub(r"[^A-Za-z0-9\s.,;:!?()'\-\"@%$&]", " ", text)
-    text = re.sub(r"[^\w\s.,;:!?()'\-\"@%$&]", " ", text)
+    # text = unicodedata.normalize("NFKC", text)
+    # #text = re.sub(r"[^A-Za-z0-9\s.,;:!?()'\-\"@%$&]", " ", text)
+    # text = re.sub(r"[^\p{L}\p{N}\s.,;:!?()'\-\"@%$&]", " ", text)
     text = re.sub(r'\s+', ' ', text)
     return text.strip()
 
@@ -96,11 +90,17 @@ def chunk_text_tokenwise(text, tokenizer, max_tokens=MAX_CHUNK_TOKENS, overlap=C
 
 
 def load_classification_model():
-    if not CLASSIFICATION_MODEL_PATH.exists():
-        raise FileNotFoundError(f"Model not found at {CLASSIFICATION_MODEL_PATH}")
-    print(f"[INFO] Loading classification model from local path: {CLASSIFICATION_MODEL_PATH}")
-    tokenizer = AutoTokenizer.from_pretrained(CLASSIFICATION_MODEL_PATH)
-    model = AutoModelForSequenceClassification.from_pretrained(CLASSIFICATION_MODEL_PATH).to(device)
+    if LOCAL_CLF_DIR.exists():
+        print(f"[INFO] Loading classification model from local cache: {LOCAL_CLF_DIR}")
+        tokenizer = AutoTokenizer.from_pretrained(LOCAL_CLF_DIR)
+        model = AutoModelForSequenceClassification.from_pretrained(LOCAL_CLF_DIR).to(device)
+    else:
+        print(f"[INFO] Downloading classification model from: {CLASSIFICATION_MODEL_NAME}")
+        tokenizer = AutoTokenizer.from_pretrained(CLASSIFICATION_MODEL_NAME)
+        model = AutoModelForSequenceClassification.from_pretrained(CLASSIFICATION_MODEL_NAME).to(device)
+        LOCAL_CLF_DIR.mkdir(parents=True, exist_ok=True)
+        tokenizer.save_pretrained(LOCAL_CLF_DIR)
+        model.save_pretrained(LOCAL_CLF_DIR)
     return tokenizer, model
 
 
@@ -161,7 +161,7 @@ def highlight_text(pdf_path, terms, output_path="highlighted.pdf"):
     doc.close()
     return output_path
 
-def pipeline_process_pdf(pdf_path, document_id: str, clf_tokenizer, clf_model, nlp_model):
+def pipeline_process_pdf(pdf_path, clf_tokenizer, clf_model, nlp_model):
     pdf_id = os.path.splitext(os.path.basename(pdf_path))[0]
     doc = pymupdf.open(pdf_path)
 
@@ -171,9 +171,12 @@ def pipeline_process_pdf(pdf_path, document_id: str, clf_tokenizer, clf_model, n
 
     for page_number, page in enumerate(doc, start=1):
         raw_text = extract_page_text(page, doc)
+
         if not raw_text:
             continue
+        # print("cleaned_text\n")
         cleaned_text = clean_text_multilingual(raw_text)
+        # print(cleaned_text)
         if not cleaned_text:
             continue
 
@@ -182,18 +185,20 @@ def pipeline_process_pdf(pdf_path, document_id: str, clf_tokenizer, clf_model, n
         financials_all.extend(ner_results.get("financials", []))
 
         chunks = chunk_text_tokenwise(cleaned_text, tokenizer=clf_tokenizer)
-        gen_ai1.encode(document_id, page_number, chunks)
+        gen_ai1.encode(pdf_id, page_number,chunks)
 
+        # print("chunks\n")
         for chunk in chunks:
+            # print(chunk)
             dept = classify_text_chunk(chunk, clf_tokenizer, clf_model)
             dept_votes.append(dept)
 
     dominant_dept = Counter(dept_votes).most_common(1)[0][0] if dept_votes else "Unknown"
 
-    summary = gen_ai1.create_summary(document_id, max_tokens=1500, top_k=15)
-    # output_path = highlight_text(pdf_path, terms=[d['text'] for d in deadlines_all + financials_all], output_path=f"{pdf_id}_highlighted.pdf")
-    highlighting_terms = deadlines_all + financials_all
-    output_path = highlight_text(pdf_path, terms=highlighting_terms, output_path=f"{pdf_id}_highlighted.pdf")
+    summary = gen_ai1.create_summary(pdf_id)
+    #print(summary)
+    terms = deadlines_all + financials_all
+    output_path = highlight_text(pdf_path, terms=terms, output_path=f"{pdf_id}_highlighted.pdf")
     return {
         "department": dominant_dept,
         "summary": summary,
@@ -203,7 +208,7 @@ def pipeline_process_pdf(pdf_path, document_id: str, clf_tokenizer, clf_model, n
     }
 
 
-if __name__ == "_main_":
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Unified PDF Processing Pipeline")
     parser.add_argument("pdf_file", help="Path to input PDF file")
     args = parser.parse_args()
@@ -219,3 +224,4 @@ if __name__ == "_main_":
     print(f"\nSummary:\n{results['summary']}")
     print(f"\nDeadlines found: {results['deadlines']}")
     print(f"\nFinancial terms found: {results['financials']}")
+

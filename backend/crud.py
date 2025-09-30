@@ -7,16 +7,47 @@ import uuid
 def get_user(db: Session, user_id: str):
     return db.query(models.User).filter(models.User.id == user_id).first()
 
+# def create_user(db: Session, user: schemas.UserCreate):
+#
+#     # --- TEMPORARY FIX TO BYPASS THE BROKEN BCRYPT LIBRARY ---
+#     # We will store the plain password directly.
+#     # This is insecure for a real application but will get you unblocked.
+#     print(f"[SECURITY WARNING] Storing plain text password for user: {user.id}")
+#
+#     if not user.password:
+#         raise ValueError("Cannot create a user with an empty password.")
+#
+#     # Instead of calling the broken hash function, we just use the password as-is.
+#     hashed_password = user.password
+#     # --- END OF TEMPORARY FIX ---
+#
+#     db_user = models.User(
+#         id=user.id,
+#         name=user.name,
+#         department=user.department,
+#         role=user.role,
+#         hashed_password=hashed_password # Storing the plain password here for now
+#     )
+#     db.add(db_user)
+#     db.commit()
+#     db.refresh(db_user)
+#     return db_user
+
 def create_user(db: Session, user: schemas.UserCreate):
+    # This now works for ALL users, including 'automation_user' and real users.
     hashed_password = auth.get_password_hash(user.password)
     db_user = models.User(
-        id=user.id, name=user.name, department=user.department,
-        role=user.role, hashed_password=hashed_password
+        id=user.id,
+        name=user.name,
+        department=user.department,
+        role=user.role,
+        hashed_password=hashed_password
     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
+
 
 # --- Document Functions (Unchanged) ---
 def get_document_by_id(db: Session, document_id: uuid.UUID):
@@ -26,20 +57,17 @@ def get_all_documents(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Document).offset(skip).limit(limit).all()
 
 def get_documents_by_department(db: Session, department: str, skip: int = 0, limit: int = 100):
-    return db.query(models.Document).filter(models.Document.department == department).offset(skip).limit(limit).all()
+    # This is now a case-INSENSITIVE comparison. It will match 'HR', 'hr', 'Hr', etc.
+    return db.query(models.Document).filter(models.Document.department.ilike(department)).offset(skip).limit(limit).all()
 
-def create_document(db: Session, document: schemas.DocumentCreate, file_path: str, highlighted_file_path: str, user_id: str):
+def create_document(db: Session, document: schemas.DocumentCreate, file_path: str, user_id: str):
     db_document = models.Document(
         id=uuid.uuid4(),
         title=document.title,
         department=document.department,
-        summary=document.summary,
-        deadlines=document.deadlines,
-        financial_terms=document.financial_terms,
         file_path=file_path,
-        status="processing",
-        # highlighted_file_path=highlighted_file_path, # <-- ADDED
-        uploader_id=user_id
+        uploader_id=user_id,
+        status="processing"
     )
     db.add(db_document)
     db.commit()
@@ -84,9 +112,33 @@ def update_document_with_ml_results(db: Session, document_id: uuid.UUID, ml_resu
         db_document.summary = ml_results.get("summary")
         db_document.deadlines = ml_results.get("deadlines", [])
         db_document.financial_terms = ml_results.get("financials", [])
+
+        # --- ADD THIS LINE ---
+        # This checks if a URL was provided and assigns it to the database object.
         if highlighted_file_path:
             db_document.highlighted_file_path = highlighted_file_path
-        db_document.status = "completed" # Mark as processed
+
+        db_document.status = "completed"
         db.commit()
         db.refresh(db_document)
     return db_document
+
+
+def create_notification(db: Session, document_id: uuid.UUID, department: str, message: str):
+    """Creates a new notification in the database."""
+    db_notification = models.Notification(
+        document_id=document_id,
+        department=department,
+        message=message
+    )
+    db.add(db_notification)
+    db.commit()
+    db.refresh(db_notification)
+    return db_notification
+
+def get_notifications_for_department(db: Session, department: str):
+    """Retrieves all unread notifications for a specific department, case-insensitively."""
+    return db.query(models.Notification).filter(
+        models.Notification.department.ilike(department), # <--- THE FIX
+        models.Notification.is_read == False
+    ).order_by(models.Notification.created_at.desc()).all()

@@ -56,3 +56,18 @@ class Question(BaseModel):
 
 class Answer(BaseModel):
     answer_text: str
+
+class Notification(BaseModel):
+    id: uuid.UUID
+    document_id: uuid.UUID
+    department: str
+    message: str
+    is_read: bool
+    created_at: datetime.datetime
+
+    class Config:
+        from_attributes = True
+
+class UserLogin(BaseModel):
+    id: str
+    password: str

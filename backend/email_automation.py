@@ -2,64 +2,104 @@ import imaplib
 import email
 import os
 import time
+import requests
 
 MAIL_SERVER = 'imap.gmail.com'
 EMAIL_USER = 'shrutj2104@gmail.com'
 EMAIL_PASS = 'aymw wxrh fmea bxfz'
 MAIL_BOX = 'INBOX'
 DOWNLOAD_FOLDER = "./downloaded_pdfs"
+BACKEND_UPLOAD_URL = "http://127.0.0.1:8000/documents/upload"
 
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
-def download_attached_file(mail,mail_box,download_folder):
-    mail.select(mail_box)
+def upload_file_to_backend(file_path):
+    """
+    Uploads a PDF to the backend. The server will handle setting the defaults.
+    """
+    print(f"--- Uploading {os.path.basename(file_path)} to the server... ---")
+    try:
+        with open(file_path, "rb") as f:
+            # We ONLY need to send the file now. No more payload.
+            files = {"file": (os.path.basename(file_path), f, "application/pdf")}
+            response = requests.post(BACKEND_UPLOAD_URL, files=files) # The 'data' parameter is removed
+            response.raise_for_status()
 
-    status, mails = mail.search(None,'UNSEEN')
+            print(f"✅ Successfully uploaded and processed {os.path.basename(file_path)}.")
+            return True
+
+    except requests.exceptions.RequestException as e:
+        print(f"❌ ERROR: Failed to upload {os.path.basename(file_path)}.")
+        print(f"Reason: {e}")
+        if e.response:
+            print(f"--- Server's Detailed Error Response ---")
+            try: print(e.response.json())
+            except ValueError: print(e.response.text)
+            print(f"------------------------------------")
+        return False
+
+
+def download_and_process_attachments(mail):
+    """
+    Searches for UNSEEN emails, downloads PDF attachments, and uploads them.
+    """
+    mail.select(MAIL_BOX)
+    # IMPORTANT: Changed to 'UNSEEN' to only process new emails
+    status, mails = mail.search(None, 'UNSEEN')
+    if status != 'OK':
+        print("Error searching for emails.")
+        return
+
     email_ids = mails[0].split()
 
     if not email_ids:
         print("No new emails found.")
         return
-    
-    saved_files = []
-    print(f"Found {len(email_ids)} new emails.")
+
+    print(f"Found {len(email_ids)} new emails to process.")
     for eid in email_ids:
         _, msg_data = mail.fetch(eid, "(RFC822)")
         msg = email.message_from_bytes(msg_data[0][1])
 
         for part in msg.walk():
-            # multipart are containers, bypass them
-            if part.get_content_maintype() == 'multipart':
-                continue
-            # Only process parts with attachments
-            if part.get('Content-Disposition') is None:
+            # Skip container parts and parts without a filename
+            if part.get_content_maintype() == 'multipart' or part.get('Content-Disposition') is None:
                 continue
 
             filename = part.get_filename()
+            # Check if there is a filename and it ends with .pdf
             if filename and filename.lower().endswith(".pdf"):
-                filepath = os.path.join(download_folder, filename)
-                # Avoid overwriting by adding suffix if file exists
-                
-                if not os.path.exists(filepath):
-                    with open(filepath, 'wb') as f:
-                        f.write(part.get_payload(decode=True))
-                    print(f"Saved attachment: {filepath}")
-                    saved_files.append(filepath)
 
-    
-    return saved_files
+                # 1. DOWNLOAD the file to a temporary location
+                filepath = os.path.join(DOWNLOAD_FOLDER, filename)
+                with open(filepath, 'wb') as f:
+                    f.write(part.get_payload(decode=True))
+                print(f"Downloaded temporary file: {filepath}")
+
+                # 2. UPLOAD the file to the backend
+                upload_success = upload_file_to_backend(filepath)
+
+                # 3. CLEAN UP the temporary file after processing
+                try:
+                    os.remove(filepath)
+                    print(f"Cleaned up temporary file: {filepath}")
+                except OSError as e:
+                    print(f"Error during file cleanup: {e}")
+
 
 if __name__ == "__main__":
-    mail = imaplib.IMAP4_SSL(MAIL_SERVER)
-    mail.login(EMAIL_USER, EMAIL_PASS)
-    print("Logged in successfully.")
-
     while True:
-        downloaded_files = download_attached_file(mail,MAIL_BOX, DOWNLOAD_FOLDER)
-        if downloaded_files:
-            print("Downloaded files:", downloaded_files)
-        else:
-            print("No PDF attachments found.")
+        try:
+            mail = imaplib.IMAP4_SSL(MAIL_SERVER)
+            mail.login(EMAIL_USER, EMAIL_PASS)
+            print("✅ Logged in successfully. Starting to monitor for new emails...")
 
-        time.sleep(10)  # Check for new emails every 60 seconds
-    
+            while True:
+                download_and_process_attachments(mail)
+                print("--- Waiting for 60 seconds before next check... ---")
+                time.sleep(60)
+
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            print("--- Attempting to reconnect in 60 seconds... ---")
+            time.sleep(60)

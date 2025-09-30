@@ -3,7 +3,7 @@
 import { useState, FormEvent, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import ReCAPTCHA from 'react-google-recaptcha';
+// import ReCAPTCHA from 'react-google-recaptcha';
 import { ArrowLeft } from 'lucide-react';
 
 // Base URL for backend API with safe fallback for client-side usage
@@ -30,7 +30,7 @@ const LoginContent = () => {
     const [userId, setUserId] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
-    const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+    // const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
     const [error, setError] = useState('');
 
     const handleLogin = async (e: FormEvent) => {
@@ -41,20 +41,10 @@ const LoginContent = () => {
             setError('User ID and Password are required.');
             return;
         }
-        if (!recaptchaToken) {
-            setError('Please complete the reCAPTCHA challenge.');
-            return;
-        }
-
-        // const departmentInfo = prefixToDept(userId);
-        // const department = departmentInfo.label; // e.g., "Engineering"
-        //
-        // const skip = parseInt('0', 10);
-        // const limit = parseInt('100', 10);
-        //
-        // console.log("Clean Department:", department);
-        // console.log("Clean Skip:", skip);
-        // console.log("Clean Limit:", limit);
+        // if (!recaptchaToken) {
+        //     setError('Please complete the reCAPTCHA challenge.');
+        //     return;
+        // }
 
         try {
             const urlToFetch = `${API_BASE}/users/${encodeURIComponent(userId)}`;
@@ -100,14 +90,14 @@ const LoginContent = () => {
         }
     };
 
-    const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-    if (!siteKey) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
-                <p className="text-red-400 text-center">reCAPTCHA Site Key is not configured.</p>
-            </div>
-        );
-    }
+    // const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+    // if (!siteKey) {
+    //     return (
+    //         <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+    //             <p className="text-red-400 text-center">reCAPTCHA Site Key is not configured.</p>
+    //         </div>
+    //     );
+    // }
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-900">
@@ -168,13 +158,13 @@ const LoginContent = () => {
                         />
                     </div>
 
-                    <div className="flex justify-center pt-2">
-                        <ReCAPTCHA
-                            sitekey={siteKey}
-                            onChange={(token) => setRecaptchaToken(token)}
-                            theme="dark" // Set the reCAPTCHA theme to dark
-                        />
-                    </div>
+                    {/*<div className="flex justify-center pt-2">*/}
+                    {/*    <ReCAPTCHA*/}
+                    {/*        sitekey={siteKey}*/}
+                    {/*        onChange={(token) => setRecaptchaToken(token)}*/}
+                    {/*        theme="dark" // Set the reCAPTCHA theme to dark*/}
+                    {/*    />*/}
+                    {/*</div>*/}
 
                     {error && <p className="text-sm text-center text-red-400">{error}</p>}
 

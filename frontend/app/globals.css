@@ -1,8 +1,23 @@
 @import "tailwindcss";
+@import 'react-calendar/dist/Calendar.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --card: #1f2937; /* gray-800 */
+  --card-foreground: #f9fafb;
+  --popover: #1f2937;
+  --popover-foreground: #f9fafb;
+  /* ... add other variables if needed */
+
+  /* Add these for Tremor theming */
+  --tremor-brand-dark: #111827; /* gray-900 */
+  --tremor-brand-surface: #1f2937; /* gray-800 */
+  --tremor-brand-border: #374151; /* gray-700 */
+  --tremor-brand-accent: #3b82f6; /* blue-500 */
 }
 
 @theme inline {
@@ -43,4 +58,28 @@ body {
 
   /* This makes the image cover the height of the screen while its width is auto-sized for tiling */
   background-size: auto 100%;
+}
+
+
+/* Optional: Custom calendar styling for dark mode */
+.react-calendar {
+  background: #2d3748; /* gray-800 */
+  border: 1px solid #4a5568; /* gray-600 */
+}
+.react-calendar__tile--now {
+  background: #4a5568; /* gray-600 */
+}
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  background: #4299e1; /* blue-500 */
+}
+/* ... etc. */
+
+/* In app/globals.css */
+
+.deadline-date {
+  background-color: #ef4444 !important; /* A bright red color */
+  color: white !important;
+  border-radius: 9999px;
+  font-weight: bold;
 }

@@ -1,53 +1,39 @@
 'use client';
-
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { parse, isValid, format } from 'date-fns';import { useState, useEffect, useMemo } from 'react';
 import {
-    Bell, FileText, Clock, CheckCircle, RefreshCw, X, User, Settings, LogOut, Search, ChevronDown, Loader2
+    Bell,
+    FileText,
+    Loader2,
+    Settings,
+    LogOut,
+    Clock,
+    FolderKanban,
+    LayoutDashboard,
+    BarChart2,
+    CheckSquare
 } from 'lucide-react';
+import Link from "next/link";
+import Calendar from 'react-calendar';
+import { Tooltip } from 'react-tooltip';
+import {NavLink} from "@/app/documents/components";
 
-// --- Define Types for our Data ---
-// This helps ensure our data from the backend is used correctly.
+// --- Define Types ---
+type Notification = { id: string; document_id: string; message: string; created_at: string; };
 type Document = {
-    id: number;
+    id: string;
     title: string;
-    type: string;
-    date: string;
-    status: 'read' | 'unread' | 'deadline' | 'approval_pending';
-    department: string;
+    department: string; // Add department
+    deadlines?: string[]; // Add deadlines
+    // Add any other fields from the backend if needed for stats
 };
+type UserProfile = { name: string; department: string; isAdmin: boolean; };
 
-type UserProfile = {
-    name: string;
-    role: 'admin' | 'department';
-    department?: string; // Department is optional for an admin
-    deptSlug?: string;
-};
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://127.0.0.1:8000').replace(/\/+$/, '');
 
-// --- API Simulation ---
-// This function mimics fetching data from your backend.
-// Replace the content of this function with your actual API call.
-const fetchDashboardData = async (): Promise<{ documents: Document[] }> => {
-    console.log("Fetching data from backend...");
-    await new Promise(resolve => setTimeout(resolve, 800));
-    const documents: Document[] = [
-        { id: 1, title: 'Q3 Vendor Invoice Batch', type: 'Invoice', date: '2025-09-22', status: 'approval_pending', department: 'Finance' },
-        { id: 2, title: 'New Safety Circular (SC-113)', type: 'Safety Bulletin', date: '2025-09-21', status: 'unread', department: 'Operations' },
-        { id: 3, title: 'Corridor Expansion Environmental Study', type: 'Report', date: '2025-09-20', status: 'read', department: 'Engineering' },
-        { id: 4, title: 'Updated HR Policy on Remote Work', type: 'HR Policy', date: '2025-09-19', status: 'read', department: 'HR' },
-        { id: 5, title: 'Depot HVAC Maintenance Plan', type: 'Maintenance', date: '2025-09-18', status: 'deadline', department: 'Maintenance' },
-        { id: 6, title: 'Purchase Order PO-2025-582', type: 'Procurement', date: '2025-09-17', status: 'read', department: 'Finance' },
-        { id: 7, title: 'Weekly Incident Report Summary', type: 'Report', date: '2025-09-22', status: 'unread', department: 'all' },
-    ];
-    return { documents };
-};
-
-
-// --- Reusable Components (No change needed here) ---
-
-const StatCard = ({ icon, title, value, color }: { icon: React.ReactNode; title: string; value: number; color: string }) => (
-    <div className="bg-gray-800 p-6 rounded-lg shadow-lg flex items-start gap-4">
-        <div className={`p-3 rounded-md ${color}`}>{icon}</div>
+// --- Reusable Components ---
+const StatCard = ({ title, value, icon, color }: { title: string; value: number | string; icon: React.ReactNode; color: string }) => (
+    <div className="bg-gray-800 p-6 rounded-lg flex items-center gap-4">
+        <div className={`p-3 rounded-full ${color}`}>{icon}</div>
         <div>
             <p className="text-3xl font-bold text-white">{value}</p>
             <p className="text-sm text-gray-400">{title}</p>
@@ -55,84 +41,169 @@ const StatCard = ({ icon, title, value, color }: { icon: React.ReactNode; title:
     </div>
 );
 
-const DocumentItem = ({ doc }: { doc: Document }) => {
-    const statusStyles: { [key: string]: { text: string, bg: string, label: string } } = {
-        read: { text: 'text-gray-300', bg: 'bg-gray-600', label: 'Read' },
-        unread: { text: 'text-blue-300', bg: 'bg-blue-800', label: 'Unread' },
-        deadline: { text: 'text-yellow-300', bg: 'bg-yellow-800', label: 'Deadline' },
-        approval_pending: { text: 'text-orange-300', bg: 'bg-orange-800', label: 'Pending Approval' },
+// const DeadlineCalendar = ({ documents }: { documents: Document[] }) => {
+//     // This logic to find which dates have deadlines is already correct.
+//     const deadlineDates = useMemo(() => {
+//         const dates = new Set<string>();
+//         documents.forEach(doc => {
+//             doc.deadlines?.forEach(deadlineStr => {
+//                 const match = deadlineStr.match(/(\d{4}-\d{2}-\d{2})/);
+//                 if (match) {
+//                     dates.add(match[1]); // Add just the 'YYYY-MM-DD' string
+//                 }
+//             });
+//         });
+//         return dates;
+//     }, [documents]);
+//
+//     // --- THIS IS THE FIX ---
+//     // We use tileClassName to add a CSS class to dates that have a deadline.
+//     const tileClassName = ({ date, view }: { date: Date, view: string }) => {
+//         if (view === 'month') {
+//             const dateString = date.toISOString().slice(0, 10);
+//             if (deadlineDates.has(dateString)) {
+//                 // This CSS class will make the date stand out.
+//                 return 'deadline-date';
+//             }
+//         }
+//         return null;
+//     };
+//
+//     return (
+//         <div className="bg-gray-800 p-4 rounded-lg">
+//             <h4 className="font-semibold text-white mb-2">Deadline Calendar</h4>
+//             {/* We now use tileClassName instead of tileContent */}
+//             <Calendar tileClassName={tileClassName} className="w-full border-none" />
+//             <p className="text-xs text-center mt-2 text-gray-400">
+//                 <span className="inline-block w-3 h-3 bg-red-500 rounded-full mr-2"></span>
+//                 Indicates a document deadline.
+//             </p>
+//         </div>
+//     );
+// };
+const DeadlineCalendar = ({ documents }: { documents: Document[] }) => {
+    const deadlineDates = useMemo(() => {
+        const dates = new Set<string>();
+        documents.forEach(doc => {
+            doc.deadlines?.forEach(deadlineStr => {
+                // --- THIS IS THE NEW, SMARTER LOGIC ---
+                // Try to find any common date-like pattern in the string
+                const dateMatch = deadlineStr.match(/(\d{1,2}(st|nd|rd|th)?\s\w+\s\d{4})|(\d{4}-\d{2}-\d{2})/i);
+
+                if (dateMatch) {
+                    // Call the imported functions directly, without the prefix.
+                    const parsedDate = parse(dateMatch[0], 'do MMMM yyyy', new Date());
+                    const parsedDateISO = parse(dateMatch[0], 'yyyy-MM-dd', new Date());
+
+                    let validDate: Date | null = null;
+                    if(isValid(parsedDate)) {
+                        validDate = parsedDate;
+                    } else if (isValid(parsedDateISO)) {
+                        validDate = parsedDateISO;
+                    }
+
+                    if (validDate) {
+                        dates.add(format(validDate, 'yyyy-MM-dd'));
+                    }
+                }
+                // --- END OF NEW LOGIC ---
+            });
+        });
+        return dates;
+    }, [documents]);
+
+    const tileClassName = ({ date, view }: { date: Date, view: string }) => {
+        if (view === 'month') {
+            const dateString = format(date, 'yyyy-MM-dd'); // Use date-fns for consistency
+            if (deadlineDates.has(dateString)) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                // Compare dates correctly
+                return date < today ? 'deadline-date-past' : 'deadline-date-future';
+            }
+        }
+        return null;
     };
-    const currentStatus = statusStyles[doc.status] || statusStyles.read;
 
     return (
-        <div className="flex items-center justify-between p-4 bg-gray-800 rounded-md hover:bg-gray-700 transition-colors duration-200">
-            <div className="flex items-center gap-4">
-                <FileText className="text-gray-500" size={24} />
-                <div>
-                    <p className="font-semibold text-white">{doc.title}</p>
-                    <p className="text-sm text-gray-400">{doc.type} &bull; {doc.date}</p>
-                </div>
+        <div className="bg-gray-800 p-4 rounded-lg">
+            <h4 className="font-semibold text-white mb-2">Deadline Calendar</h4>
+            <Calendar tileClassName={tileClassName} className="w-full border-none" />
+            <div className="text-xs text-center mt-2 space-x-4 text-gray-400">
+                <span><span className="inline-block w-3 h-3 bg-yellow-500 rounded-full mr-2"></span>Upcoming</span>
+                {/*<span><span className="inline-block w-3 h-3 bg-gray-500 rounded-full mr-2"></span>Past</span>*/}
             </div>
-            <span className={`px-3 py-1 text-xs font-bold rounded-full ${currentStatus.bg} ${currentStatus.text}`}>
-                {currentStatus.label}
-            </span>
         </div>
     );
 };
 
 
-// --- Main Dashboard Page Component ---
-
 export default function DashboardPage() {
-    const searchParams = useSearchParams();
-
-    // State for storing user data, documents, and loading status
     const [user, setUser] = useState<UserProfile | null>(null);
+    const [notifications, setNotifications] = useState<Notification[]>([]);
     const [documents, setDocuments] = useState<Document[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [showNotification, setShowNotification] = useState(true);
 
-    // useEffect hook to fetch data when the component loads
     useEffect(() => {
         const loadData = async () => {
-            try {
-                const { documents } = await fetchDashboardData();
+            let storedUser: any = JSON.parse(localStorage.getItem('kmrl_user') || 'null');
+            if (!storedUser) { setIsLoading(false); return; }
 
-                // Determine department from URL or localStorage
-                const urlDept = (searchParams.get('dept') || '').toLowerCase();
-                let storedUser: any = null;
-                try {
-                    storedUser = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('kmrl_user') || 'null') : null;
-                } catch {}
+            // const currentUser: UserProfile = {
+            //     name: storedUser.name || 'Admin',
+            //     department: storedUser.department || 'All',
+            //     isAdmin: storedUser.isAdmin || false,
+            // };
+            // setUser(currentUser);
+            const currentUser: UserProfile = { name: storedUser.name, department: storedUser.department, isAdmin: storedUser.isAdmin };
+            setUser(currentUser);
 
-                const isAdmin = storedUser?.isAdmin || urlDept === 'admin';
-                const departmentLabel = isAdmin ? undefined : (storedUser?.department || (urlDept ? urlDept.charAt(0).toUpperCase() + urlDept.slice(1) : 'Operations'));
-                const currentUser: UserProfile = {
-                    name: storedUser?.name || 'Employee',
-                    role: isAdmin ? 'admin' : 'department',
-                    department: departmentLabel,
-                    deptSlug: isAdmin ? 'admin' : (storedUser?.deptSlug || urlDept || 'operations'),
-                };
-
-                const filtered = documents.filter(doc =>
-                    isAdmin || doc.department.toLowerCase() === currentUser.deptSlug || doc.department === 'all'
-                );
-
-                setUser(currentUser);
-                setDocuments(filtered);
-            } catch (error) {
-                console.error("Failed to fetch dashboard data:", error);
-                // Handle error state here, e.g., show an error message
-            } finally {
-                setIsLoading(false);
+            if (currentUser.isAdmin) {
+                // Fetch ALL documents from the /documents/ endpoint.
+                const response = await fetch(`${API_BASE}/documents/`);
+                if (response.ok) {
+                    const allDocs = await response.json();
+                    setDocuments(allDocs);
+                }
             }
+
+            try {
+                // Fetch both notifications and documents
+                const [notifRes, docsRes] = await Promise.all([
+                    fetch(`${API_BASE}/notifications/${currentUser.department}`),
+                    fetch(`${API_BASE}/documents/${currentUser.department}`)
+                ]);
+
+                if (notifRes.ok) setNotifications(await notifRes.json());
+                if (docsRes.ok) setDocuments(await docsRes.json());
+
+            } catch (error) { console.error("Failed to fetch dashboard data:", error); }
+            finally { setIsLoading(false); }
         };
-
         loadData();
-        // Re-run when dept query changes
-    }, [searchParams]);
+    }, []);
 
-    // If data is loading, show a loading spinner
+    const deadlinesCount = useMemo(() => {
+        const uniqueUpcomingDeadlines = new Set<string>();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set to the beginning of today
+
+        documents.forEach(doc => {
+            doc.deadlines?.forEach(deadlineStr => {
+                const match = deadlineStr.match(/(\d{4}-\d{2}-\d{2})/);
+                if (match) {
+                    const dateString = match[1];
+                    const deadlineDate = new Date(dateString);
+                    if (deadlineDate >= today) {
+                        uniqueUpcomingDeadlines.add(dateString);
+                    }
+                }
+            });
+        });
+
+        return uniqueUpcomingDeadlines.size;
+    }, [documents]);
+
     if (isLoading) {
         return (
             <div className="flex min-h-screen bg-gray-900 text-gray-300 items-center justify-center">
@@ -142,99 +213,157 @@ export default function DashboardPage() {
         );
     }
 
-    // If no user data, something went wrong
-    if (!user) {
+    // --- THIS IS THE NEW, CORRECTED BLOCK ---
+    if (user?.isAdmin) {
+        // Perform all calculations here, inside the block.
+        // This ensures they only run when the admin view is rendered.
+        const totalDocs = documents.length;
+        const financeDocs = documents.filter(d => d.department === 'Finance').length;
+        const opsDocs = documents.filter(d => d.department === 'Operations').length;
+
+        // IMPORTANT: Use the 'deadlinesCount' from the useMemo hook for an accurate count of unique, upcoming deadlines.
+        const allDeadlines = deadlinesCount;
+
         return (
-            <div className="flex min-h-screen bg-gray-900 text-gray-300 items-center justify-center">
-                <p className="text-xl text-red-400">Could not load user data. Please try logging in again.</p>
+            <div className="flex h-screen bg-gray-900 text-gray-300">
+                {/* --- Sidebar --- */}
+                <aside className="w-64 bg-gray-950 p-6 flex-shrink-0 flex flex-col">
+                    <div>
+                        <h1 className="text-2xl font-bold text-white mb-8">Docu Sphere</h1>
+                        <nav className="flex flex-col gap-4">
+                            <NavLink href="/dashboard" icon={<LayoutDashboard size={20} />} isActive={true}>Dashboard</NavLink>
+                            <NavLink href="/admin" icon={<FolderKanban size={20} />} isActive={false}>Admin Documents</NavLink>
+                            <NavLink href="#" icon={<BarChart2 size={20} />} isActive={false}>Reports</NavLink>
+                            <NavLink href="#" icon={<CheckSquare size={20} />} isActive={false}>Approvals</NavLink>
+                        </nav>
+                    </div>
+                    <div className="mt-auto">
+                        <NavLink href="#" icon={<Settings size={20} />} isActive={false}>Settings</NavLink>
+                        <NavLink href="/" icon={<LogOut size={20} />} isActive={false}>Logout</NavLink>
+                    </div>
+                </aside>
+
+                {/* --- Main Admin Content --- */}
+                <main className="flex-1 p-8 overflow-y-auto">
+                    <header className="mb-8">
+                        <h2 className="text-3xl font-bold text-white">Admin Dashboard</h2>
+                        <p className="text-gray-400">Welcome, {user?.name}! Here is the sitewide overview.</p>
+                    </header>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        {/* Left Column: Stats and Actions */}
+                        <div className="lg:col-span-2 space-y-8">
+                            <section>
+                                <h3 className="text-xl font-semibold text-white mb-4">Sitewide Statistics</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <StatCard title="Total Documents" value={documents.length} icon={<FolderKanban size={24} />} color="bg-blue-600" />
+                                    <StatCard title="Upcoming Deadlines" value={allDeadlines} icon={<Clock size={24} />} color="bg-yellow-600" />
+                                    <StatCard title="Finance Docs" value={financeDocs} icon={<FileText size={24} />} color="bg-green-600" />
+                                    <StatCard title="Operations Docs" value={opsDocs} icon={<FileText size={24} />} color="bg-blue-600" />
+                                </div>
+                            </section>
+
+                            <section className="bg-gray-800 p-6 rounded-lg">
+                                <h3 className="text-xl font-semibold text-white mb-4">Admin Actions</h3>
+                                <p className="text-gray-400 mb-4">Your primary tool for managing and uploading all documents is the Admin Documents page.</p>
+                                <Link href="/admin" className="inline-block bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700">
+                                    Go to Admin Documents View
+                                </Link>
+                            </section>
+                        </div>
+
+                        {/* Right Column: Calendar */}
+                        <div className="lg:col-span-1">
+                            <DeadlineCalendar documents={documents} />
+                        </div>
+                    </div>
+                </main>
             </div>
         );
     }
 
-    // --- Calculations are now based on state, not mock data ---
-    const readCount = documents.filter(d => d.status === 'read').length;
-    const deadlineCount = documents.filter(d => d.status === 'deadline').length;
-    const pendingCount = documents.filter(d => d.status === 'approval_pending').length;
-    const updatesCount = documents.filter(d => d.status === 'unread').length;
+    // const deadlinesCount = documents.reduce((acc, doc) => acc + (doc.deadlines?.length || 0), 0);
+
 
     return (
-        <div className="flex min-h-screen bg-gray-900 text-gray-300">
-            {/* Sidebar Navigation */}
+        <div className="flex h-screen bg-gray-900 text-gray-300">
             <aside className="w-64 bg-gray-950 p-6 flex-shrink-0 flex flex-col">
-                <h1 className="text-2xl font-bold text-white mb-8">Docu <span className="text-blue-500">Sphere</span></h1>
-                <nav className="flex flex-col gap-4">
-                    <a href="/dashboard" className="bg-gray-800 text-white p-3 rounded-md">Dashboard</a>
-                    <a href="/documents" className="text-gray-400 hover:bg-gray-800 hover:text-white p-3 rounded-md">Documents</a>
-                    <a href="#" className="text-gray-400 hover:bg-gray-800 hover:text-white p-3 rounded-md">Reports</a>
-                    <a href="#" className="text-gray-400 hover:bg-gray-800 hover:text-white p-3 rounded-md">Approvals</a>
-                </nav>
+                <div>
+                    <h1 className="text-2xl font-bold text-white mb-8">Docu Sphere</h1>
+                    <nav className="flex flex-col gap-4">
+                        <NavLink href="/dashboard" icon={<LayoutDashboard size={20} />} isActive={true}>Dashboard</NavLink>
+                        {/* Admin sees a link to the admin page, others see the documents page */}
+                        {user?.isAdmin ? (
+                            <NavLink href="/admin" icon={<FolderKanban size={20} />} isActive={false}>Admin Documents</NavLink>
+                        ) : (
+                            <NavLink href="/documents" icon={<FolderKanban size={20} />} isActive={false}>Documents</NavLink>
+                        )}
+                        <NavLink href="#" icon={<BarChart2 size={20} />} isActive={false}>Reports</NavLink>
+                        <NavLink href="#" icon={<CheckSquare size={20} />} isActive={false}>Approvals</NavLink>
+                    </nav>
+                </div>
                 <div className="mt-auto">
-                    <a href="#" className="text-gray-400 hover:bg-gray-800 hover:text-white p-3 rounded-md flex items-center gap-2"><Settings size={20} /> Settings</a>
-                    <a href="/" className="text-gray-400 hover:bg-gray-800 hover:text-white p-3 rounded-md flex items-center gap-2"><LogOut size={20} /> Logout</a>
+                    <NavLink href="#" icon={<Settings size={20} />} isActive={false}>Settings</NavLink>
+                    <NavLink href="/" icon={<LogOut size={20} />} isActive={false}>Logout</NavLink>
                 </div>
             </aside>
-
-            {/* Main Content */}
             <main className="flex-1 p-8 overflow-y-auto">
-                {/* Header */}
-                <header className="flex justify-between items-center mb-8">
-                    <div>
-                        <h2 className="text-3xl font-bold text-white">{user.role === 'admin' ? 'Admin Dashboard' : `${user.department} Dashboard`}</h2>
-                        <p className="text-gray-400">Welcome back, {user.name}! Department: {user.role === 'admin' ? 'Admin' : user.department}</p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
-                            <input type="text" placeholder="Search documents..." className="bg-gray-800 border border-gray-700 text-white rounded-md pl-10 pr-4 py-2 focus:outline-none focus:border-blue-500" />
-                        </div>
-                        <div className="flex items-center gap-2 bg-gray-800 p-2 rounded-md">
-                            <User size={20} className="text-gray-400" />
-                            <span className="text-white font-semibold">{user.name}</span>
-                            <ChevronDown size={16} className="text-gray-500" />
-                        </div>
-                    </div>
+                <header className="mb-8">
+                    <h2 className="text-3xl font-bold text-white">{user?.department} Dashboard</h2>
+                    <p className="text-gray-400">Welcome, {user?.name}! Here is the sitewide overview.</p>
                 </header>
 
-                {/* 1. Popping Notification */}
-                {showNotification && updatesCount > 0 && (
-                    <div className="bg-blue-600 text-white p-4 rounded-lg mb-8 flex justify-between items-center shadow-lg">
-                        <div className="flex items-center gap-3">
-                            <Bell size={24} />
-                            <p>
-                                <span className="font-bold">New For You:</span> There are {updatesCount} new updates in your feed.
-                                {pendingCount > 0 && ` You also have ${pendingCount} pending approval(s).`}
-                            </p>
-                        </div>
-                        <button onClick={() => setShowNotification(false)} className="hover:bg-blue-500 p-1 rounded-full">
-                            <X size={20} />
-                        </button>
-                    </div>
-                )}
-
-                {/* 3. Quick Cards Section */}
-                <section className="mb-8">
-                    <h3 className="text-xl font-semibold text-white mb-4">Your Quick Stats</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <StatCard icon={<FileText size={24} />} title="Documents Read" value={readCount} color="bg-gray-600" />
-                        <StatCard icon={<Clock size={24} />} title="On Deadlines" value={deadlineCount} color="bg-yellow-600" />
-                        <StatCard icon={<CheckCircle size={24} />} title="Pending Approvals" value={pendingCount} color="bg-orange-600" />
-                        <StatCard icon={<RefreshCw size={24} />} title="New Updates" value={updatesCount} color="bg-blue-600" />
-                    </div>
-                </section>
-
-                {/* 2. Personalized Feed */}
-                <section>
-                    <h3 className="text-xl font-semibold text-white mb-4">Personalized Document Feed</h3>
-                    <div className="space-y-4">
-                        {documents.length > 0 ? (
-                            documents.map(doc => <DocumentItem key={doc.id} doc={doc} />)
-                        ) : (
-                            <div className="text-center py-12 bg-gray-800 rounded-md">
-                                <p className="text-gray-400">No documents found for your department.</p>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Main Content: Stats and Notifications */}
+                    <div className="lg:col-span-2 space-y-8">
+                        <section>
+                            <h3 className="text-xl font-semibold text-white mb-4">Department Stats</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <StatCard title="Total Documents" value={documents.length} icon={<FolderKanban size={24} />} color="bg-blue-600" />
+                                <StatCard title="Upcoming Deadlines" value={deadlinesCount} icon={<Clock size={24} />} color="bg-yellow-600" />
+                                <StatCard title="New Notifications" value={notifications.length} icon={<Bell size={24} />} color="bg-green-600" />
                             </div>
-                        )}
+                        </section>
+
+                        <section>
+                            <h3 className="text-xl font-semibold text-white mb-4">Notification & Activity Feed</h3>
+                            <div className="space-y-4">
+                                {notifications.length === 0 && documents.length === 0 ? (
+                                    <div className="text-center py-12 bg-gray-800 rounded-md"><p>No new activity.</p></div>
+                                ) : (
+                                    <>
+                                        {notifications.map(notif => (
+                                            <div key={notif.id} className="bg-gray-800 p-4 rounded-lg flex items-center gap-3 border-l-4 border-yellow-400">
+                                                <Bell className="text-yellow-400 flex-shrink-0" />
+                                                <div>
+                                                    <p className="text-white font-semibold">{notif.message}</p>
+                                                    <p className="text-xs text-gray-500">{new Date(notif.created_at).toLocaleString()}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {/* Show the most recent document as an 'activity' if no notifications exist */}
+                                        {notifications.length === 0 && documents.length > 0 && (
+                                            <div className="bg-gray-800 p-4 rounded-lg flex items-center gap-3 border-l-4 border-blue-500">
+                                                <FileText className="text-blue-400 flex-shrink-0" />
+                                                <div>
+                                                    <p className="text-white">New document assigned: '{documents[0].title}'</p>
+                                                    <p className="text-xs text-gray-500">This is the most recent document for your department.</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+                        </section>
                     </div>
-                </section>
+
+                    {/* Sidebar: Calendar */}
+                    <div className="lg:col-span-1">
+                        <DeadlineCalendar documents={documents} />
+                    </div>
+                </div>
+
+
             </main>
         </div>
     );

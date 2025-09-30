@@ -1,9 +1,14 @@
 # backend/main.py
 from urllib.parse import unquote
-from typing import List
+from typing import List, Optional
 import uuid
+import auth
 # --- Standard Imports ---
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form
+from pydantic import BaseModel
+from database import engine, get_db, SessionLocal
+from datetime import datetime
+
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import OperationalError
 from sqlalchemy import text
@@ -13,8 +18,8 @@ import shutil # Important for file operations
 from pipeline import highlight_text
 from ml_qna import qna as generate_ml_answer
 
-from email_automation import download_attached_file
-import imaplib
+# from email_automation import download_attached_file
+# import imaplib
 from contextlib import asynccontextmanager
 from pipeline import pipeline_process_pdf, load_all_models
 from fastapi import BackgroundTasks
@@ -40,16 +45,58 @@ ml_models = {}
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # This code runs ONCE when the server starts up
-    print("[INFO] Server starting up. Loading ML models...")
+    print("[INFO] Server starting up...")
+
+    # --- ADD THIS ENTIRE BLOCK ---
+    print("[INFO] Ensuring system 'automation_user' exists...")
+    db = SessionLocal()
+    try:
+        # Check if the user already exists
+        automation_user = crud.get_user(db, user_id="automation_user")
+        if not automation_user:
+            # If not, create it
+            print("[INFO] 'automation_user' not found. Creating it now...")
+            user_data = schemas.UserCreate(
+                id="automation_user",
+                name="Automation Service",
+                department="System",
+                role="system",
+                password="automation_pass" # A placeholder password
+            )
+            crud.create_user(db, user_data)
+            print("[INFO] 'automation_user' created successfully.")
+        else:
+            print("[INFO] 'automation_user' already exists.")
+    finally:
+        db.close() # Always close the database session
+    # --- END OF BLOCK ---
+
+    print("[INFO] Loading ML models...")
     tokenizer, model, nlp_model = load_all_models()
     ml_models["tokenizer"] = tokenizer
     ml_models["model"] = model
     ml_models["nlp_model"] = nlp_model
     print("[INFO] ML models loaded successfully and are ready.")
+
     yield
-    # This code runs when the server shuts down
+
     ml_models.clear()
     print("[INFO] Server shutting down.")
+
+
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     # This code runs ONCE when the server starts up
+#     print("[INFO] Server starting up. Loading ML models...")
+#     tokenizer, model, nlp_model = load_all_models()
+#     ml_models["tokenizer"] = tokenizer
+#     ml_models["model"] = model
+#     ml_models["nlp_model"] = nlp_model
+#     print("[INFO] ML models loaded successfully and are ready.")
+#     yield
+#     # This code runs when the server shuts down
+#     ml_models.clear()
+#     print("[INFO] Server shutting down.")
 
 
 app = FastAPI(lifespan=lifespan)
@@ -60,8 +107,6 @@ origins = [
     "http://127.0.0.1:3000",
     "http://localhost:3003", # <-- ADD THIS LINE
     "http://127.0.0.1:3003", # <-- And this one for good measure
-    # "http://localhost:3003", # <-- ADD THIS LINE
-    # "http://127.0.0.1:3003", # <-- And this one for good measure
 ]
 
 app.add_middleware(
@@ -75,36 +120,6 @@ app.add_middleware(
 # --- LOCAL UPLOAD DIRECTORY for temporary storage ---
 UPLOAD_DIRECTORY = "uploads"
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
-
-# def generate_simple_answer(question: str, document: models.Document) -> str:
-#     """
-#     A simple, rule-based engine to answer questions based on pre-processed data.
-#     """
-#     question_lower = question.lower()
-#
-#     # Rule 1: Check for keywords related to deadlines
-#     if any(keyword in question_lower for keyword in ["deadline", "date", "when"]):
-#         if document.deadlines and len(document.deadlines) > 0:
-#             # Format the list of deadlines into a nice string
-#             deadlines_str = "\n".join([f"- {d}" for d in document.deadlines])
-#             return f"Based on the document, the following deadlines or key dates were identified:\n{deadlines_str}"
-#         else:
-#             return "No specific deadlines or key dates were extracted from this document."
-#
-#     # Rule 2: Check for keywords related to financials
-#     if any(keyword in question_lower for keyword in ["financial", "money", "cost", "payment"]):
-#         if document.financial_terms and len(document.financial_terms) > 0:
-#             financial_str = "\n".join([f"- {f}" for f in document.financial_terms])
-#             return f"The following financial terms or figures were mentioned in the document:\n{financial_str}"
-#         else:
-#             return "No specific financial terms or figures were extracted from this document."
-#
-#     # Rule 3: Default to providing the summary
-#     # This will catch "what is this about?", "summarize", etc.
-#     if document.summary:
-#         return f"Here is the summary of the document:\n\n{document.summary}"
-#
-#     return "I could not find a specific answer, but this document has not yet been summarized."
 
 # --- Diagnostic Endpoints ---
 @app.get("/")
@@ -141,69 +156,95 @@ def read_user(user_id: str, db: Session = Depends(get_db)):
 
 @app.post("/documents/upload")
 def upload_document(
-        title: str = Form(...),
-        department: str = Form(...),
-        user_id: str = Form(...),
+        # Optional fields for email automation, but required for frontend
+        title: Optional[str] = Form(None),
+        department: Optional[str] = Form(None),
+        user_id: Optional[str] = Form(None),
+        # The file is always required
         file: UploadFile = File(...),
         db: Session = Depends(get_db)
 ):
-    user = crud.get_user(db, user_id=user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="Uploader not found")
+    # --- 1. Set Default Values & Validate User ---
+    # If a title wasn't provided (from email), create a default one.
+    final_title = title or f"Email Attachment - {file.filename}"
 
-    # --- (1) UPLOAD TO CLOUD FIRST ---
+    # If a user_id wasn't provided, it MUST be the automation user.
+    final_user_id = user_id or "automation_user"
+
+    # If a department wasn't provided, set it to be auto-detected by the pipeline.
+    final_department = department or "auto-detected"
+
+    # Now, use these final variables to validate the user
+    user = crud.get_user(db, user_id=final_user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail=f"Uploader '{final_user_id}' not found")
+
+    # --- 2. Upload Original File to Cloud ---
     print("Uploading original file to cloud storage...")
     public_url = upload_file_to_supabase(file.file, file.filename)
     if not public_url:
         raise HTTPException(status_code=500, detail="Could not upload file to cloud storage.")
     print("File uploaded successfully. Public URL:", public_url)
 
-    # Rewind file for local saving
-    file.file.seek(0)
+    file.file.seek(0) # Rewind file for local processing
 
-    # --- (2) CREATE INITIAL DATABASE RECORD ---
-    # Create the document with a 'processing' status
-    document_data = schemas.DocumentCreate(title=title, department=department)
-
-
-    db_document = crud.create_document(db=db, document=document_data, file_path=public_url, highlighted_file_path=None, user_id=user_id)
-    # Set status to processing
-    db_document.status = "processing"
-    db.commit()
-    db.refresh(db_document)
+    # --- 3. Create Initial Database Record ---
+    # This now correctly matches the function in crud.py (which should not take highlighted_file_path)
+    document_data = schemas.DocumentCreate(title=final_title, department=final_department)
+    db_document = crud.create_document(db=db, document=document_data, file_path=public_url, user_id=final_user_id)
     print(f"Initial document record created in DB with ID: {db_document.id}")
 
-    # --- (3) SAVE LOCAL COPY & RUN PIPELINE ---
+    # --- 4. Save Local Copy & Run ML Pipeline ---
     local_file_path = os.path.join(UPLOAD_DIRECTORY, file.filename)
     with open(local_file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
     print("Starting ML pipeline processing...")
-    # Pass the DATABASE UUID to the pipeline
     ml_results = pipeline_process_pdf(
         pdf_path=local_file_path,
-        # document_id=str(db_document.id),
         clf_tokenizer=ml_models["tokenizer"],
         clf_model=ml_models["model"],
         nlp_model=ml_models["nlp_model"]
     )
     print("ML pipeline processing complete.")
 
+    # --- 5. Upload Highlighted PDF (if created) ---
     highlighted_pdf_path = ml_results.get("highlighted_pdf")
     highlighted_public_url = None
     if highlighted_pdf_path and os.path.exists(highlighted_pdf_path):
         print("Uploading highlighted file to cloud storage...")
         with open(highlighted_pdf_path, "rb") as f:
-            # Use the filename from the path for uploading
             highlighted_filename = os.path.basename(highlighted_pdf_path)
             highlighted_public_url = upload_file_to_supabase(f, highlighted_filename)
         print("Highlighted PDF uploaded successfully.")
 
-    # --- (4) UPDATE THE RECORD WITH ML RESULTS ---
+    # ... (after the ML pipeline runs) ...
+
+    # --- (6) UPDATE THE DATABASE RECORD WITH ML RESULTS ---
     print("Updating database record with ML results...")
-    final_document = crud.update_document_with_ml_results(db, document_id=db_document.id, ml_results=ml_results, highlighted_file_path=highlighted_public_url)
+    final_document = crud.update_document_with_ml_results(
+        db,
+        document_id=db_document.id,
+        ml_results=ml_results,
+        highlighted_file_path=highlighted_public_url
+    )
     print("Database record updated successfully.")
 
+    # --- (7) CREATE NOTIFICATION FOR THE DEPARTMENT ---
+    # The ML results contain the department the document was routed to.
+    routed_department = final_document.department
+    if routed_department and routed_department != "Unknown":
+        notification_message = f"New document '{final_document.title}' has been assigned to your department."
+        crud.create_notification(
+            db=db,
+            document_id=final_document.id,
+            department=routed_department,
+            message=notification_message
+        )
+        print(f"Notification created for department: {routed_department}")
+
+
+    # --- 8. Cleanup Local Files ---
     try:
         if os.path.exists(local_file_path):
             os.remove(local_file_path)
@@ -212,12 +253,12 @@ def upload_document(
     except OSError as e:
         print(f"Error during file cleanup: {e}")
 
+    # --- 9. Return Final Response ---
     return {
         "message": "Document processed and all data saved successfully.",
         "document_info": schemas.Document.model_validate(final_document),
         "highlighted_pdf_url": highlighted_public_url
     }
-
 
 # --- Read Endpoints ---
 @app.get("/documents/", response_model=list[schemas.Document])
@@ -232,11 +273,7 @@ def read_documents_for_department(department: str, skip: int = 0, limit: int = 1
 
 # --- ADD THESE NEW ENDPOINTS FOR Q&A ---
 
-def run_ml_qna_in_background(question_id: uuid.UUID, pinecone_pdf_id: str, question_text: str, db: Session):
-    """
-    This function is executed in the background after the user gets their response.
-    It runs the ML pipeline and updates the answer in the database.
-    """
+def run_ml_qna_in_background(question_id: uuid.UUID, pinecone_pdf_id: str, question_text: str):
     print(f"[BACKGROUND TASK] Starting ML RAG pipeline for question ID: {question_id}")
 
     # Call the ML function to get the answer
@@ -247,13 +284,17 @@ def run_ml_qna_in_background(question_id: uuid.UUID, pinecone_pdf_id: str, quest
     print(f"[BACKGROUND TASK] Answer generated: {answer_text[:100]}...")
 
     # Use the CRUD function to save the answer to the database
-    crud.update_question_with_answer(
-        db=db,
-        question_id=question_id,
-        answer_text=answer_text
-    )
-    print(f"[BACKGROUND TASK] Answer saved to database for question ID: {question_id}")
-
+    db = SessionLocal()
+    try:
+        # Use the new 'db' session to update the database
+        crud.update_question_with_answer(
+            db=db,
+            question_id=question_id,
+            answer_text=answer_text
+        )
+        print(f"[BACKGROUND TASK] Answer saved to database for question ID: {question_id}")
+    finally:
+        db.close()
 
 @app.post("/documents/{document_id}/questions", response_model=schemas.Question)
 def ask_question_on_document(
@@ -291,7 +332,6 @@ def ask_question_on_document(
         db_question.id,
         pinecone_pdf_id, # <--- Pass the correct filename ID
         question.question_text,
-        db
     )
     # --- END OF KEY CHANGE ---
 
@@ -313,50 +353,6 @@ def get_document_questions(
 
 
 # --- ADD THIS NEW ENDPOINT FOR EMAIL AUTOMATION ---
-@app.post("/emails/process-attachments")
-def process_email_attachments(db: Session = Depends(get_db)):
-    """
-    Connects to the email server, downloads new PDF attachments,
-    and processes them through the ML pipeline.
-    """
-    print("[INFO] Checking for new email attachments...")
-    EMAIL_USER = os.getenv("EMAIL_USER")
-    EMAIL_PASS = os.getenv("EMAIL_PASS")
-
-    if not EMAIL_USER or not EMAIL_PASS:
-        raise HTTPException(status_code=500, detail="Email credentials not configured in .env file.")
-
-    try:
-        mail = imaplib.IMAP4_SSL('imap.gmail.com')
-        mail.login(EMAIL_USER, EMAIL_PASS)
-
-        # This function comes from your email_automation.py
-        downloaded_files = download_attached_file(mail, 'INBOX', UPLOAD_DIRECTORY)
-
-        mail.logout()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to connect or download from email: {e}")
-
-    processed_count = 0
-    if downloaded_files:
-        print(f"[INFO] Found {len(downloaded_files)} new PDFs to process.")
-        for pdf_path in downloaded_files:
-            # We need a placeholder user for automated uploads
-            user_id = "automation_user"
-            # Check if the user exists, if not, create it
-            user = crud.get_user(db, user_id=user_id)
-            if not user:
-                user_data = schemas.UserCreate(id=user_id, name="Automation Service", department="System", role="system", password="---")
-                crud.create_user(db, user_data)
-
-            # Simulate a file upload for the pipeline
-            with open(pdf_path, "rb") as f:
-                file = UploadFile(file=f, filename=os.path.basename(pdf_path))
-                # Re-use the existing upload logic
-                upload_document(title=file.filename, department="auto-detected", user_id=user_id, file=file, db=db)
-            processed_count += 1
-
-    return {"message": "Email check complete.", "new_pdfs_processed": processed_count}
 
 
 @app.patch("/questions/{question_id}/answer")
@@ -379,3 +375,11 @@ def submit_answer(
 
     print(f"Answer submitted for question ID: {question_id}")
     return {"status": "success", "question": updated_question}
+
+
+# --- NEW ENDPOINT FOR NOTIFICATIONS ---
+@app.get("/notifications/{department}", response_model=List[schemas.Notification])
+def read_notifications(department: str, db: Session = Depends(get_db)):
+    """Fetches unread notifications for a given department."""
+    notifications = crud.get_notifications_for_department(db, department=department)
+    return notifications

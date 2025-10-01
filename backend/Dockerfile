@@ -13,4 +13,4 @@ COPY . /code/
 
 # Command to run the application using Gunicorn
 # Hugging Face Spaces typically expose port 7860
-CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--host", "0.0.0.0", "--port", "7860"]
+CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:7860", "main:app"]

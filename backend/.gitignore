@@ -1,0 +1,28 @@
+# Python virtual environment
+venv/
+env/
+.venv/
+
+# Environment variables
+# CRITICAL: Never commit secrets!
+.env
+
+# Application-specific data folders
+# These should be created by the running application, not stored in git.
+downloaded_pdfs/
+uploads/
+models/
+
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE and editor directories
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db

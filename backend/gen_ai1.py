@@ -36,7 +36,8 @@ if not pc.has_index(index_name):
 index = pc.Index(index_name)
 
 encoder = HuggingFaceEmbeddings(
-    model_name=r"C:\Users\bahra\.cache\huggingface\hub\models--sentence-transformers--paraphrase-multilingual-MiniLM-L12-v2\snapshots\86741b4e3f5cb7765a600d3a3d55a0f6a6cb443d",
+    #model_name=r"C:\Users\bahra\.cache\huggingface\hub\models--sentence-transformers--paraphrase-multilingual-MiniLM-L12-v2\snapshots\86741b4e3f5cb7765a600d3a3d55a0f6a6cb443d",
+    model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     model_kwargs={"device": "cpu"}
 )
 

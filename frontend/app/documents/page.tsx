@@ -1,5 +1,5 @@
 'use client';
-import { useSearchParams } from 'next/navigation';
+// import { useSearchParams } from 'next/navigation';
 
 import { useState, useEffect, useMemo } from 'react';
 import {
@@ -20,16 +20,16 @@ import {
 
 
 export default function DocumentsPage() {
-    const searchParams = useSearchParams();
+    // const searchParams = useSearchParams();
     const [documents, setDocuments] = useState<Document[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [sortConfig, setSortConfig] = useState<{ key: keyof Document; direction: 'asc' | 'desc' }>({ key: 'upload_date', direction: 'desc' });
     const [searchTerm, setSearchTerm] = useState('');
-    const [showUploadModal, setShowUploadModal] = useState(false);
+    // const [showUploadModal, setShowUploadModal] = useState(false);
     const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
 
-    const [deptSlug, setDeptSlug] = useState<string>('operations');
-    const [isAdmin, setIsAdmin] = useState(false);
+    // const [deptSlug, setDeptSlug] = useState<string>('operations');
+    // const [isAdmin, setIsAdmin] = useState(false);
 
     // const [selectedDoc, setSelectedDoc] = useState<Document | null>(null);
     const [showQnaModalForDoc, setShowQnaModalForDoc] = useState<Document | null>(null);

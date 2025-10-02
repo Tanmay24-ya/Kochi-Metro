@@ -105,6 +105,7 @@ app = FastAPI(lifespan=lifespan)
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://kochi-metro-document.vercel.app",
     "http://localhost:3003", # <-- ADD THIS LINE
     "http://127.0.0.1:3003", # <-- And this one for good measure
 ]

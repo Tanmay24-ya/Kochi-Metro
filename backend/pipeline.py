@@ -18,10 +18,10 @@ import gen_ai1
 # ==================== CONFIGURATION ====================
 MAX_CHUNK_TOKENS = 256
 CHUNK_TOKEN_OVERLAP = 40
-CLASSIFICATION_MODEL_NAME = "models/final"  # Updated model path
+CLASSIFICATION_MODEL_NAME = "Shrut04/Fine_tunned_indic_bert_on_documents"  # Updated model path
 
-CURRENT_DIR = Path(__file__).resolve().parent
-LOCAL_CLF_DIR = CURRENT_DIR / "models" / "final"
+#CURRENT_DIR = Path(__file__).resolve().parent
+#LOCAL_CLF_DIR = CURRENT_DIR / "models" / "final"
 
 classification_dept_map = {
     0: "Engineering",
@@ -90,17 +90,21 @@ def chunk_text_tokenwise(text, tokenizer, max_tokens=MAX_CHUNK_TOKENS, overlap=C
 
 
 def load_classification_model():
-    if LOCAL_CLF_DIR.exists():
-        print(f"[INFO] Loading classification model from local cache: {LOCAL_CLF_DIR}")
-        tokenizer = AutoTokenizer.from_pretrained(LOCAL_CLF_DIR)
-        model = AutoModelForSequenceClassification.from_pretrained(LOCAL_CLF_DIR).to(device)
-    else:
-        print(f"[INFO] Downloading classification model from: {CLASSIFICATION_MODEL_NAME}")
-        tokenizer = AutoTokenizer.from_pretrained(CLASSIFICATION_MODEL_NAME)
-        model = AutoModelForSequenceClassification.from_pretrained(CLASSIFICATION_MODEL_NAME).to(device)
-        LOCAL_CLF_DIR.mkdir(parents=True, exist_ok=True)
-        tokenizer.save_pretrained(LOCAL_CLF_DIR)
-        model.save_pretrained(LOCAL_CLF_DIR)
+    # if LOCAL_CLF_DIR.exists():
+    #     print(f"[INFO] Loading classification model from hugging face: {CLASSIFICATION_MODEL_NAME}")
+    #     tokenizer = AutoTokenizer.from_pretrained(CLASSIFICATION_MODEL_NAME)
+    #     model = AutoModelForSequenceClassification.from_pretrained(CLASSIFICATION_MODEL_NAME).to(device)
+    # else:
+    #     print(f"[INFO] Downloading classification model from: {CLASSIFICATION_MODEL_NAME}")
+    #     tokenizer = AutoTokenizer.from_pretrained(CLASSIFICATION_MODEL_NAME)
+    #     model = AutoModelForSequenceClassification.from_pretrained(CLASSIFICATION_MODEL_NAME).to(device)
+    #     LOCAL_CLF_DIR.mkdir(parents=True, exist_ok=True)
+    #     tokenizer.save_pretrained(LOCAL_CLF_DIR)
+    #     model.save_pretrained(LOCAL_CLF_DIR)
+    print(f"[INFO] Loading classification model from hugging face: {CLASSIFICATION_MODEL_NAME}")
+    tokenizer = AutoTokenizer.from_pretrained(CLASSIFICATION_MODEL_NAME)
+    model = AutoModelForSequenceClassification.from_pretrained(CLASSIFICATION_MODEL_NAME).to(device)
+    
     return tokenizer, model
 
 

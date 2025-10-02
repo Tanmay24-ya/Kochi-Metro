@@ -1,0 +1,13 @@
+# Dockerfile-worker
+FROM python:3.11-bullseye
+
+WORKDIR /code
+
+# We only need 'requests' and 'python-dotenv' for this script
+COPY ./requirements-worker.txt /code/requirements-worker.txt
+RUN pip install -r /code/requirements-worker.txt
+
+COPY ./email_automation.py /code/email_automation.py
+
+# This command just runs the Python script in a loop
+CMD ["python", "-u", "email_automation.py"]

@@ -3,13 +3,19 @@ import email
 import os
 import time
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 MAIL_SERVER = 'imap.gmail.com'
-EMAIL_USER = 'shrutj2104@gmail.com'
-EMAIL_PASS = 'aymw wxrh fmea bxfz'
+# EMAIL_USER = 'shrutj2104@gmail.com'
+# EMAIL_PASS = 'aymw wxrh fmea bxfz'
+EMAIL_USER = os.environ.get("EMAIL_USER")
+EMAIL_PASS = os.environ.get("EMAIL_PASS")
+
 MAIL_BOX = 'INBOX'
 DOWNLOAD_FOLDER = "./downloaded_pdfs"
-BACKEND_UPLOAD_URL = "http://127.0.0.1:8000/documents/upload"
+BACKEND_UPLOAD_URL = "https://yashita13-kochi-metro-backend.hf.space/documents/upload"
 
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
@@ -96,8 +102,8 @@ if __name__ == "__main__":
 
             while True:
                 download_and_process_attachments(mail)
-                print("--- Waiting for 60 seconds before next check... ---")
-                time.sleep(60)
+                print("--- Waiting for 10 seconds before next check... ---")
+                time.sleep(10)
 
         except Exception as e:
             print(f"An unexpected error occurred: {e}")

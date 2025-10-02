@@ -31,8 +31,3 @@ def qna(pdf_id,query):
 
     response = chain.invoke({"context":docs, "question":query})
     return response
-
-pdf_id = "Opereations_S"
-query = "when did it start operating?"
-answer = qna(pdf_id, query)
-print("Answer:", answer)

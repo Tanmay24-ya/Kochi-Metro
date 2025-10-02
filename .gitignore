@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+frontend/node_modules/
 /.pnp
 .pnp.*
 .yarn/*
@@ -50,7 +51,8 @@ backend/__pycache__/
 backend/.idea/
 backend/.env
 backend/models/
-
+backend/downloaded_pdfs/
+backend/uploads/
 
 pipeline_code/__pycache__/
 pipeline_code/models/

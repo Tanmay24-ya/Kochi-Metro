@@ -437,20 +437,7 @@ export const UploadModal = ({ onClose, onUpload, currentDept, canChooseDept }: {
                         <label className="text-sm font-bold text-gray-400 block mb-2">Document Title</label>
                         <input value={title} onChange={(e) => setTitle(e.target.value)} type="text" placeholder="e.g., Q4 Financial Projections" className="w-full bg-gray-700 text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
-                    <div>
-                        <label className="text-sm font-bold text-gray-400 block mb-2">Department</label>
-                        {canChooseDept ? (
-                            <select value={dept} onChange={(e) => setDept(e.target.value)} className="w-full bg-gray-700 text-white rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="Finance">Finance</option>
-                                <option value="Operations">Operations</option>
-                                <option value="Engineering">Engineering</option>
-                                <option value="Maintenance">Maintenance</option>
-                                <option value="HR">HR</option>
-                            </select>
-                        ) : (
-                            <input readOnly value={dept} className="w-full bg-gray-700 text-white rounded-md p-3" />
-                        )}
-                    </div>
+
                     <div>
                         <label className="text-sm font-bold text-gray-400 block mb-2">Document File</label>
                         <div className="border-2 border-dashed border-gray-600 rounded-md p-6 text-center relative">

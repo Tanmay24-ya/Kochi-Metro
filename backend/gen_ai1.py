@@ -42,7 +42,6 @@ encoder = HuggingFaceEmbeddings(
 )
 
 
-
 def encode(pdf_id, page_numb, docs, encoder=encoder):
     """Embed and store document chunks"""
     if not docs:
@@ -134,6 +133,7 @@ prompt = ChatPromptTemplate.from_messages([
         "from the given document chunks. The summary should focus on tasks department heads need to act on immediately, critical deadlines, compliance, "
         "and cross-department coordination issues. Use only the provided context strictly.\n\n"
         "If the text is in english print summary in english else print in hybrid language malayalam and english\n"
+        "Give only single summary if text is hybrid of malayalam"
         "Structure:\n"
         "1. Overview of Main Operations and Activities\n"
         "2. Critical Urgent Tasks and Immediate Deadlines\n"

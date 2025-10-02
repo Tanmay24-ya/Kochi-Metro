@@ -153,16 +153,9 @@ import React from 'react';
 
 export default function HomePage() {
   return (
-    <div style={{ padding: '40px', fontFamily: 'sans-serif' }}>
-      <h1>Deployment Test Successful</h1>
-      <p>
-        If you are seeing this page, it means the deployment pipeline and the
-        file routing on Vercel are working perfectly.
-      </p>
-      <p>
-        The previous "404: NOT_FOUND" error was caused by an issue inside the
-        original page.tsx component code.
-      </p>
+    <div>
+      <h1>Homepage Deployed!</h1>
+      <p>If you see this, the layout and page are working correctly.</p>
     </div>
   );
 }

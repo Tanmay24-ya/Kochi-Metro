@@ -4,8 +4,8 @@ FROM python:3.11-bullseye
 WORKDIR /code
 
 # We only need 'requests' and 'python-dotenv' for this script
-COPY ./requirements-worker.txt /code/requirements-worker.txt
-RUN pip install -r /code/requirements-worker.txt
+COPY requirements-automation.txt /code/requirements-worker.txt
+RUN pip install -r /code/requirements-automation.txt
 
 COPY ./email_automation.py /code/email_automation.py
 

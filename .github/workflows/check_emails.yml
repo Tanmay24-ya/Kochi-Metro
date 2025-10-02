@@ -1,0 +1,33 @@
+name: Check for New Emails
+
+on:
+  schedule:
+    # Runs every 5 minutes
+    - cron: '*/5 * * * *'
+  workflow_dispatch: # Allows you to run it manually from the Actions tab
+
+jobs:
+  run-email-script:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend # IMPORTANT: Runs commands from inside the backend folder
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements-automation.txt
+
+      - name: Run the email automation script
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          BACKEND_URL: ${{ secrets.BACKEND_URL }}
+        run: python email_automation.py

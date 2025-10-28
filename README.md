@@ -1,4 +1,4 @@
-# DocuSphere - Intelligent Document Hub for KMRL 🚀
+# DocuSphere - Intelligent Document Hub for KMRL 
 
 An AI-driven platform designed to transform document overload into clear, actionable knowledge for Kochi Metro Rail Limited (KMRL). This project provides a unified system to manage, summarize, and route thousands of documents, empowering stakeholders with faster decisions and preserved institutional memory.
 

@@ -23,7 +23,7 @@ os.environ["GOOGLE_API_KEY"] = GEMINI_API_KEY
 
 pc = Pinecone(api_key=PINECONE_API_KEY)
 
-index_name = "doc-embeddings"
+index_name = "quickstart"
 if not pc.has_index(index_name):
     pc.delete_index(index_name)
     pc.create_index(
@@ -35,9 +35,12 @@ if not pc.has_index(index_name):
 
 index = pc.Index(index_name)
 
+from sentence_transformers import SentenceTransformer
+model = SentenceTransformer("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+model.save("./models/paraphrase-multilingual-MiniLM-L12-v2")
+
 encoder = HuggingFaceEmbeddings(
-    #model_name=r"C:\Users\bahra\.cache\huggingface\hub\models--sentence-transformers--paraphrase-multilingual-MiniLM-L12-v2\snapshots\86741b4e3f5cb7765a600d3a3d55a0f6a6cb443d",
-    model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    model_name="./models/paraphrase-multilingual-MiniLM-L12-v2",
     model_kwargs={"device": "cpu"}
 )
 

@@ -58,3 +58,4 @@ pipeline_code/__pycache__/
 pipeline_code/models/
 pipeline_code/pdfs/
 pipeline_code/.env
+backend/.env

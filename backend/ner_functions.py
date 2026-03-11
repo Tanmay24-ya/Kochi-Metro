@@ -7,12 +7,36 @@ from transformers import AutoTokenizer, AutoModelForTokenClassification, pipelin
 # --- English spaCy model ---
 nlp_en = spacy.load("en_core_web_md")
 
-# --- Malayalam / IndicNER model ---
-indic_model_name = "ai4bharat/IndicNER"
-tokenizer = AutoTokenizer.from_pretrained(indic_model_name)
-model = AutoModelForTokenClassification.from_pretrained(indic_model_name)
-indic_ner = pipeline("ner", model=model, tokenizer=tokenizer, aggregation_strategy="simple")
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+
+# 1. Define your token variable
+# Fetched from environment variables
+HF_TOKEN = os.getenv("HF_TOKEN")
+
+indic_model_name = "ai4bharat/IndicNER"
+
+# 2. Pass the token when loading the Tokenizer
+tokenizer = AutoTokenizer.from_pretrained(
+    indic_model_name, 
+    token=HF_TOKEN
+)
+
+# 3. Pass the token when loading the Model
+model = AutoModelForTokenClassification.from_pretrained(
+    indic_model_name, 
+    token=HF_TOKEN
+)
+
+# 4. The pipeline uses the loaded objects (no token needed here)
+indic_ner = pipeline(
+    "ner", 
+    model=model, 
+    tokenizer=tokenizer, 
+    aggregation_strategy="simple"
+)
 # Consistent language detection
 DetectorFactory.seed = 0
 

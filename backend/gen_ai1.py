@@ -148,7 +148,7 @@ prompt = ChatPromptTemplate.from_messages([
 ])
 
 llm = ChatGoogleGenerativeAI(
-    model="gemini-2.0-flash-exp",
+    model="gemini-1.5-flash",
     temperature=0,
     max_tokens=1000,
     timeout=60,  # Add timeout
